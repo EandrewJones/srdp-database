@@ -1,0 +1,133 @@
+{% extends 'admin/master.html' %}
+
+{% block head_meta %}
+{% endblock %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block head_css %}
+{{ super() }}
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/admin.css') }}" rel="stylesheet" type="text/css"> -->
+{% endblock %}
+
+{% block access_control %}
+<!-- Can be used to add login/logout buttons -->
+<ul class="navbar-nav navbar-right">
+    <li>
+        <a class="nav-link" href="{{ url_for('main.index') }}">Return to site</a>
+    </li>
+    <li>
+        <a class="nav-link" href="{{ url_for('auth.logout') }}">Log out</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block messages %}
+<!-- Alerts and various messages -->
+{% endblock %}
+
+{% block body %}
+<!-- Where view will be display -->
+<div class="col-xs-12 col-sm-12">
+    <div class="jumbotron">
+        <h1>Hello, administrator!</h1>
+        <p>Welcome to {{ config["COVER_NAME"]}}'s admin portal. Here you can perform a number of basic
+            functions for site management and content moderation.</p>
+        <p>The Users and Posts dropdowns in the navbar will take you to an interface for performing basic CRUD
+            operations on the database models. Every table can be sorted and filtered by column. Searchable columns vary
+            by model.</p>
+        <p>Static Files and S3 Bucket offer some basic file management.</p>
+    </div>
+    <div class="row">
+        <h3>Users</h3>
+    </div>
+    <div class="row">
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>User</h4>
+            <p>The model representing users. Each user has a unique id and username. If known, either can be used to
+                isolate
+                entries. Users are searchable by id, username, name, email, and about me.</p>
+            <p><a class="btn btn-primary" href="/admin/user" role="button">View model »</a></p>
+        </div>
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Likes</h4>
+            <p>The relational model representing connections between users and posts. Entries are uniquely identified by
+                the User-Post pair and should be isolated by User.Id and Post.Id. Likes are searchable by user's id,
+                user's username, user's name, post id and post body.
+            </p>
+            <p><a class="btn btn-primary" href="/admin/likes" role="button">View model »</a></p>
+        </div>
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Follow</h4>
+            <p>The relational model representing connections between two users. Entries are uniqely identified by the
+                Follower-Followed pair and should be isolated by Follower.Id and Followed.Id. Follows are searchable by
+                id, username, name for follower and followed.</p>
+            <p><a class="btn btn-primary" href="/admin/follow" role="button">View model »</a></p>
+        </div>
+    </div>
+    <div class="row">
+        <h3>Posts</h3>
+    </div>
+    <div class="row">
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Post</h4>
+            <p>The model representing posts. Each post has a unique id. If known, this can be used to quickly isolate a
+                post. Posts are searchable by id, author's username, and body.
+            </p>
+            <p><a class="btn btn-primary" href="/admin/post" role="button">View model »</a></p>
+        </div>
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Comments</h4>
+            <p>The relational model for representing a parent-comment connection between two posts. Comments
+                themselves are a special subclass of posts. Each entry is uniquely identify by a Parent.Id-Comment.Id
+                pair. This pair must be used to isolate entires. Comments are searchable by id and body for both
+                parent and comment.</p>
+            <p><a class="btn btn-primary" href="/admin/comments" role="button">View model »</a></p>
+        </div>
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Reposts</h4>
+            <p>The relational model for representing a root-repost connection between two posts. Reposts are a special
+                subclass of posts that contain a reference to a 'root' post which is the embedded within the body of the
+                repost. Each entry is uniquely identified by a Root.Id-Repost.Id pair. This pair must be used to isolate
+                entries. Reposts are searchable by id and body for both root and repost.</p>
+            <p><a class="btn btn-primary" href="/admin/reposts" role="button">View model »</a></p>
+        </div>
+        <!--/span-->
+    </div>
+    <!--/row-->
+    <div class="row">
+        <h3>File Management</h3>
+    </div>
+    <div class="row">
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>Static Files</h4>
+            <p>A directory-like GUI for simple static file management. If you want to change either background or logo
+                post-launch, you may re-upload either with names matching those specified in the `.env` file. If the
+                names are not the same, this will not work.
+            </p>
+            <h6 style="color: red">Warning: do not delete / modify either the `/src` or `/meplayer` folders!</h6>
+            <p><a class="btn btn-primary" href="/admin/fileadmin" role="button">View Static Files »</a></p>
+        </div>
+        <!--/span-->
+        <div class="col-6 col-sm-6 col-lg-4">
+            <h4>S3 Bucket</h4>
+            <p>A lightweight GUI wrapper displaying the contents of the AWS S3 bucket for multimedia content. The
+                website only has read/write privileges to the bucket, so cannot delete content. If you want to delete
+                malicious multimedia content, you should delete the corresponding post or user account.</p>
+            <p><a class="btn btn-primary" href="/admin/s3fileadmin" role="button">View S3 Bucket »</a></p>
+        </div>
+        <!--/span-->
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+# Files
+.env
+app.db
+temp_docker.sh
+launch.sh
+test_api.sh
+
+# Folders
+venv/
+__pycache__/
+logs/
+flagon-userale/
+.vscode/
+.ipynb_checkpoints/

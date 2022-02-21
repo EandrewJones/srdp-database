@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from 'macros.html' import posts_widget with context %}
+{% set lazy_load = True %}
+
+{% block center_content %}
+{{ super() }}
+    <div class="col ml-4">
+
+        <!-- User Info -->
+        <div class="card mb-3 m-4 bg-dark text-white">
+            <div class="row g-0 d-flex align-items-center">
+              <div class="col-xl-6 p-2 d-flex justify-content-center">
+                <img class="img-fluid rounded-circle" src="{{ user.avatar(225) }}">
+              </div>
+              <div class="col-xl-6">
+                <div class="card-body">
+                    <h4 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">{{ _('Username') }}: {{ user.username }}</small>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">{{ _('Last seen on') }}: {{ moment(user.last_seen).format('LLL') }}</small>
+                    </p>    
+                    <p class="card-text">{{ _('%(count)d followers', count=user.followers.count()) }}, {{ _('%(count)d following', count=user.followed.count()) }}</p>
+                    {% if user.about_me %}
+                    <p class="card-text"> {{ user.about_me }}</p>
+                    {% endif %}
+                </div>
+
+                
+                <div class="d-flex m-2 card-footer border-light justify-content-around">
+                    {% if user == current_user %}
+                        <a class="link-info" href="{{ url_for('main.edit_profile') }}"><i class="fas fa-edit fa-lg"></i> {{ _('Edit your profile') }} </a>
+                        {% if not current_user.get_task_in_progress('export_posts') %}
+                        |<a class="link-info ps-1" href="{{ url_for('main.export_posts') }}"><i class="fas fa-file-export fa-lg"></i> {{ _('Export your posts') }}</a>
+                        {% endif %}
+                    {% else %}
+                        <a class="link-info" href="{{ url_for('main.send_message', recipient=user.username) }}"><i class="fas fa-envelope fa-lg"></i> {{ _('Send private message') }} </a> |
+                        {% if not current_user.is_following(user) %}
+                        <a class="link-info" href="{{ url_for('main.follow_action', user_id=user.id, action='follow') }}">{{ _('Follow') }}</a>
+                        {% else %}
+                        <a class="link-info" href="{{ url_for('main.follow_action', user_id=user.id, action='unfollow') }}">{{ _('Unfollow') }}</a>
+                        {% endif %}
+                        <p><a href="{{ url_for('main.send_message', recipient=user.username) }}"></a></p>
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        <!-- Posts -->
+        <div class="row my-4 justify-content-center text-light">
+            <div class="my-md-2">
+                <h1 class="fw-bold mb-2 text-center">{{ _('Recent Posts') }}</h1>
+                <hr>
+            </div>
+        </div>
+        {{ posts_widget(posts) }}
+    </div>
+    
+{% endblock %}

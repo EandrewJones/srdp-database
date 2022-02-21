@@ -1,0 +1,290 @@
+{% extends 'bootstrap/base.html' %}
+{% from 'macros.html' import side_navbar with context %}
+{% from 'macros.html' import top_navbar with context %}
+{% from 'macros.html' import lazy_loader_sentinel %}
+{% set lazy_load = lazy_load|default(False) %}
+
+
+{% block styles %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/css/bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/css/mdb5.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='meplayer/mediaelementplayer.min.css') }}">
+{% endblock %}
+
+
+{% block title %}
+    {% if title %} 
+        {{ title }} - {{ config['COVER_NAME'] }}
+    {% else %}
+        {{ _('Welcome to ') }} {{ config['COVER_NAME'] }}
+    {% endif %}
+{% endblock %}
+
+
+{% block navbar %} 
+    {{ top_navbar() }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Side Navbar Column -->
+            <div class="col-lg-2 col-md-1 d-none d-sm-block px-3 bg-dark border-warning border-end">
+                {{ side_navbar() }}
+            </div>
+
+            <!-- Center Content column -->
+            <div id="scrollMe" class="col-lg-6 col-md-11 col-sm-12 col-xs-12 py-4 bg-image bg-dark border-warning" style="height: calc(100vh - 59.6px);
+                            background-image: url('{{ url_for('static', filename=config['BG']) }}')">
+
+                <!-- Alerts -->
+                {% if current_user.is_authenticated %} {% with tasks = current_user.get_tasks_in_progress() %} {% if tasks %} {% for task in tasks %}
+                <div class="alert alert-success px-2 justify-content-center" role="alert">
+                    {{ task.description }}
+                    <span id="{{ task.id }}-progress">{{ task.get_progress() }}</span>
+                </div>
+                {% endfor %} {% endif %} {% endwith %} {% endif %} {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+                <div class="alert alert-info px-2 justify-content-center" role="alert">{{ message }}</div>
+                {% endfor %} {% endif %} {% endwith %}
+
+                <!-- Center Content Block -->
+                <div id="scroller">
+                    {# application content needs to be provided in the center_content block #} 
+                    {% block center_content %}
+
+                    <!-- template schema, hidden from the dom -->
+                    <template id="template">
+                        <div id="template_content" class="row row-cols-1 px-3"></div>
+                    </template>
+                    {% endblock %}
+                </div>
+
+                <!-- Lazy loader sentinel -->
+                {% if lazy_load %} {{ lazy_loader_sentinel(n_url=next_url, p_url=prev_url) }} {% endif %}
+            </div>
+
+            <!-- Right Content column -->
+            <div class="col-lg-4 d-md-none d-sm-none d-none d-lg-block d-md-block py-4 bg-dark bg-image border-start border-warning" style="height: calc(100vh - 59.6px);
+                        background-image: url('{{ url_for('static', filename=config['BG']) }}')">
+
+                {# application content needs to be provided in the right_content block #}
+                {% block right_content %}{% endblock %}
+            </div>
+        </div>
+
+        <!-- Dynamic Modal -->
+        <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="FormModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- content loads here -->
+                </div>
+            </div>
+        </div>
+        <!-- End Dynamic Modal -->
+
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+
+    <!-- Material Design Bootstrap -->
+    <script type="text/javascript" src="{{ url_for('static', filename='src/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='src/js/bootstrap5.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='src/js/mdb5.min.js') }}"></script>
+
+    <!-- MediaElement Player -->
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/mediaelement-and-player.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/renderers/facebook.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/renderers/soundcloud.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/renderers/twitch.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/renderers/vimeo.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='meplayer/renderers/youtube.min.js') }}"></script>
+
+    <!-- Moment -->
+    {{ moment.include_moment() }} {{ moment.lang(g.locale) }}
+
+    <!-- Load UserALE.js and set logging parameters-->
+    <script 
+        src="{{ url_for('static', filename='src/js/userale/userale-2.2.0.min.js') }}"
+        data-url={{ config.LOGSTASH_URL }}
+        data-user={{ current_user.get_id()|safe }}
+        data-log-details="false"
+        data-tool="Discovery Social Media Simulator"
+        data-threshold="1"
+        data-autostart=false
+        data-version="2.2.0">
+    </script>
+    
+    <!-- Load UserALE.js API calls to modify log stream-->
+    <script src="{{ url_for('static', filename='src/js/userale/userale-mods.js') }}"
+        data-observe-target={{ config.USERALE_OBSERVE_TARGET }}
+        data-mutation-target={{ config.USERALE_MUTATION_TARGET }}
+        data-log-threshold={{ config.USERALE_LOG_THRESHOLD }}
+        data-log-type={{ config.USERALE_LOG_TYPE }}
+        data-event-type={{ config.USERALE_EVENT_TYPE }}>
+    </script>
+    
+
+    <!-- Lazy load -->
+    {% set end_message = end_message|default('No more posts') %} 
+    {% if lazy_load %}
+    <script src="{{ url_for('static', filename='src/js/lazy-load.js') }}"
+        data-end-message="{{ end_message }}">
+    </script>
+    {% endif %}
+
+    <!-- Toggle Search Results -->
+    <script>
+        function toggleSearchResults(onId, offId) {
+            var turnOn = document.getElementById(onId);
+            var turnOff = document.getElementById(offId);
+            turnOn.style.display = 'block';
+            turnOff.style.display = 'none';
+        }
+    </script>
+
+    <!-- Utilities -->
+    <script>
+        // Scrolling
+        var curScroll = 0;
+        $(window).bind('mousewheel DOMMouseScroll', function(e) {
+            var evt = window.event || e;
+            var delta = evt.detail ? evt.detail * (-120) : evt.wheelDelta;
+            if (delta < 0) {
+                //scroll down
+                curScroll += 35;
+            } else {
+                //scroll up
+                curScroll -= 35;
+            }
+            $('#scrollMe').scrollTop(curScroll);
+            return true;
+        });
+
+        // Repost links
+        $(function() {
+            var repost = $("#root");
+            if (typeof repost !== 'undefined' && repost !== null) {
+                $("#root").click(function() {
+                    window.location = $(this).find("a.root-link").attr("href");
+                    return false;
+                });
+            }
+        });
+
+
+        // Quick fade alerts
+        $(document).ready(function() {
+            setTimeout(function() {
+                $('.alert').fadeOut('fast');
+            }, 5000); // <-- time in milliseconds
+        });
+
+        // Toggle show/hide replies
+        $('.show-replies').click(function() { //you can give id or class name here for $('button')
+            $(this).text(function(i, old) {
+                return old == '+ replies' ? '- replies' : '+ replies';
+            });
+        });
+
+        // Translation function
+        function translate(sourceElem, destElem, sourceLang, destLang) {
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/translate', {
+                text: $(sourceElem).text(),
+                source_language: sourceLang,
+                dest_language: destLang
+            }).done(function(response) {
+                $(destElem).text(response['text'])
+            }).fail(function() {
+                $(destElem).text("{{ _('Error: Could not contact server.') }}");
+            });
+        }
+
+        // Notifications and tasks functions
+        function set_count(n, id) {
+            $(id).text(n);
+            $(id).css('visibility', n ? 'visible' : 'hidden');
+        }
+
+        function set_task_progress(task_id, progress) {
+            $('#' + task_id + '-progress').text(progress);
+        } 
+        
+        {% if current_user.is_authenticated %}
+        $(function() {
+            var since = 0;
+            setInterval(function() {
+                $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+                    function(notifications) {
+                        var n_updates = 0;
+                        for (var i = 0; i < notifications.length; i++) {
+                            switch (notifications[i].name) {
+                                case 'unread_comment_count':
+                                case 'unread_like_count':
+                                case 'unread_follow_count':
+                                case 'unread_repost_count':
+                                    n_updates += notifications[i].data;
+                                    break;
+                                case 'unread_message_count':
+                                    set_count(notifications[i].data, '#message_count');
+                                    break;
+                                case 'task_progress':
+                                    set_task_progress(notifications[i].data.task_id,
+                                        notifications[i].data.progress);
+                                    break;
+                            }
+                            set_count(n_updates, '#update_count');
+                            since = notifications[i].timestamp;
+                        }
+                    }
+                );
+            }, 10000);
+        }); 
+        {% endif %}
+
+        // Function to launch modal
+        // Uses event delegation for dynamically loaded content
+        $(document).on('click', '.edit-modal-opener', function() {
+            var url = $(this).data('whatever');
+
+            $.get(url, function(data) {
+                $('#Modal .modal-content').html(data);
+                $('#Modal').modal();
+                $('#ModalSubmit').click(function(event) {
+                    event.preventDefault();
+                    $.post(url, data = $('#ModalForm').serialize(), function(
+                        data) {
+                        if (data.status == 'ok') {
+                            $('#Modal').modal('hide');
+                            location.reload();
+                        } else {
+                            var obj = JSON.parse(data);
+                            for (var key in obj) {
+                                if (obj.hasOwnProperty(key)) {
+                                    var value = obj[key];
+                                }
+                            }
+                            $('.help-block').remove()
+                            $('<p class="help-block">' + value + '</p>')
+                                .insertAfter('#' + key);
+                            $('.form-group').addClass('has-error')
+                        }
+                    })
+                });
+            })
+        });
+
+        // Wraps embedded iframes in the correct aspect ratio div
+        $(document).ready(function() {
+            $('iframe').wrap("<div class='ratio ratio-16x9'></div>");
+        });
+    </script>
+{% endblock %}

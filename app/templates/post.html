@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% from 'macros.html' import post_widget with context %}
+
+{% block center_content %}
+<div class="col ml-4">
+
+    <!-- Posts -->
+    <div class="row row-cols-1 px-3 py-3">
+    {{ post_widget(post=post, in_comment_form=False, is_condensed=False) }}
+    </div>
+</div>
+{% endblock %}
