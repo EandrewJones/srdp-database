@@ -8,17 +8,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_admin import Admin
 from flask_mail import Mail
-from flask_bootstrap import Bootstrap
-from flask_moment import Moment
-from flask_babel import Babel, lazy_gettext as _l
 from flask_cors import CORS
-from elasticsearch import Elasticsearch
-from redis import Redis
-from micawber.providers import bootstrap_basic
-from micawber.contrib.mcflask import add_oembed_filters
-import rq
-import json
-import boto3
 from config import Config
 
 db = SQLAlchemy()
@@ -29,11 +19,7 @@ login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
 admin = Admin(template_mode="bootstrap4", name=Config.COVER_NAME)
 mail = Mail()
-bootstrap = Bootstrap()
-moment = Moment()
-babel = Babel()
 cors = CORS()
-oembed_providers = bootstrap_basic()
 
 
 def create_app(config_class=Config):
@@ -50,25 +36,7 @@ def create_app(config_class=Config):
     ma.init_app(app)
     login.init_app(app)
     mail.init_app(app)
-    bootstrap.init_app(app)
-    moment.init_app(app)
-    babel.init_app(app)
     cors.init_app(app)
-    app.elasticsearch = (
-        Elasticsearch([app.config["ES_URL"]]) if app.config["ES_URL"] else None
-    )
-    if app.elasticsearch:
-        with open("search/config/index_template.json") as f:
-            index_template = json.load(f)
-        app.elasticsearch.indices.put_template(name="search", body=index_template)
-    app.redis = Redis.from_url(app.config["REDIS_URL"])
-    app.task_queue = rq.Queue("cssms-tasks", connection=app.redis)
-    app.s3 = boto3.client(
-        "s3",
-        aws_access_key_id=app.config["S3_ACCESS_KEY"],
-        aws_secret_access_key=app.config["S3_SECRET_ACCESS_KEY"],
-    )
-    add_oembed_filters(app, oembed_providers)
 
     # Register Blueprints
     from app.errors import bp as errors_bp
@@ -113,7 +81,7 @@ def create_app(config_class=Config):
                 mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
                 fromaddr="no-reply@" + app.config["MAIL_SERVER"],
                 toaddrs=app.config["ADMINS"],
-                subject="CogSec Social Media Simulator Failure",
+                subject="SRDP Database Failure",
                 credentials=auth,
                 secure=secure,
             )
@@ -128,7 +96,7 @@ def create_app(config_class=Config):
             if not os.path.exists("logs"):
                 os.mkdir("logs")
             file_handler = RotatingFileHandler(
-                "logs/cssms.log", maxBytes=10240, backupCount=10
+                "logs/SRDP.log", maxBytes=10240, backupCount=10
             )
             file_handler.setFormatter(
                 logging.Formatter(
@@ -140,14 +108,10 @@ def create_app(config_class=Config):
             app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info("CogSec SMS startup")
+        app.logger.info("SRDP DB Startup")
 
     return app
 
-
-@babel.localeselector
-def get_locale():
-    return request.accept_languages.best_match(current_app.config["LANGUAGES"])
 
 
 from app import models
