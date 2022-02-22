@@ -7,7 +7,7 @@ from marshmallow import Schema, fields
 from flask import url_for
 from config import Config
 from app import ma
-from app.models import Follow, Likes, User, Comments, Reposts, Post
+from app.models import ViolentTactics, NonviolentTactics, Groups, Organizations
 
 
 # Create an APISpec
@@ -17,11 +17,11 @@ spec = APISpec(
     openapi_version="3.0.3",
     plugins=[FlaskPlugin(), MarshmallowPlugin()],
     info=dict(
-        description=f"An API for social media data I/O on the {Config.COVER_NAME} platform.\
-            \n\nWhen passing new data to the model, the order of creation must be `Users` >\
-            (`Follows` | `Posts`) > (`Likes` | `Comments` | `Reposts`), where the pipe '|' \
+        description=f"An API for the Strategies of Resistance Data Project.\
+            \n\nWhen passing new data to the model, the order of creation must be `Groups` >\
+            `Organizations` > (`NonviolentTactics` | `ViolentTactics` ), where the pipe '|' \
             indicates order indifference at the step. Users must be token-authorized to \
-            POST, PUT, or DELETE their own content. All paths are token protected except\
+            POST, PUT, or DELETE content. All paths are token protected except\
             for `User` creation.\
             \n\nAny model may be GET retrieved by any user so long as they are token-authorized.\
             User tokens change every 30 minutes and can be retrieved with curl:\
@@ -38,53 +38,177 @@ spec.components.security_scheme("BasicAuth", http_basic_scheme)
 spec.components.security_scheme("BearerAuth", http_bearer_scheme)
 
 # Define Schemas
-class FollowSchema(ma.SQLAlchemyAutoSchema):
+class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "follows"
-        model = Follow
+        type_ = "violence"
+        model = ViolentTactics
         include_fk = True
+        fields = (
+            "facId",
+            "year",
+            "againstState",
+            "againstStateFatal",
+            "againstOrg",
+            "againstOrgFatal",
+            "againstIngroup",
+            "againstIngroupFatal",
+            "againstOutgroup",
+            "againstOutgroupFatal",
+            "created_at",
+            "modified_at",
+            "_links"
+        )
 
     # Links
     _links = ma.Hyperlinks(
         {
-            "follower": ma.URLFor("api.get_user", values=dict(id="<follower_id>")),
-            "followed": ma.URLFor("api.get_user", values=dict(id="<followed_id>")),
+            "self": ma.URLFor("api.get_violent_tactic", values=dict(id="<id>")),
+            "collection": ma.URLFor("api.get_violent_tactics"),
+            "organizaation": ma.URLFor("api.get_org", values=dict(facId="<facId>"))
         }
     )
 
 
-class FollowInputSchema(Schema):
+class ViolentTacticsInputSchema(Schema):
     # Required fields
-    follower_id = fields.Int(description="Follower's id.", required=True)
-    followed_id = fields.Int(description="Followed's id", required=True)
+    facId = fields.Int(description="Organizations faction ID (facId)", required=True)
+    year = fields.Int(description="Violent activity year", required=True)
 
     # Optional fields
-    created_at = fields.DateTime(description="Time of follow.")
+    againstState = fields.Int(description="Violent action taken against the state.")
+    againstStateFatal = fields.Int(description="Fatally violent action taken against the state.")
+    againstOrg = fields.Int(description="Violent action taken against another organization.")
+    againstOrgViolent = fields.Int(description="Fatally violent action taken against another organization.")
+    againstIngroup = fields.Int(description="Violent action taken against the ethnolinguistic in-group.")
+    againstIngroupFatal = fields.Int(description="Fatally violent action taken against the ethnolinguistic in-group.")
+    againstOutgroup = fields.Int(description="Violent action taken against an ethnolinguistic out-group.")
+    againstOutgroupFatal = fields.Int(description="Fatally violent action taken against an ethnolinguistic out-group.")
+
+    created_at = fields.DateTime(description="Time of row creation.")
     modified_at = fields.DateTime(description="Time of most recent modification.")
 
 
-class LikesSchema(ma.SQLAlchemyAutoSchema):
+class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "likes"
-        model = Likes
+        type_ = "nonviolence"
+        model = NonviolentTactics,
         include_fk = True
+        fields = (
+            "facId",
+            "year",
+            "economicNoncooperation",
+            "protestDemonstration",
+            "nonviolentIntervention",
+            "socialNoncooperation",
+            "institutionalAction",
+            "politicalNoncooperation",
+            "created_at",
+            "modified_at",
+            "_links"
+        )
 
-    # Links
     _links = ma.Hyperlinks(
         {
-            "user": ma.URLFor("api.get_user", values=dict(id="<user_id>")),
-            "post": ma.URLFor("api.get_post", values=dict(id="<post_id>")),
+            "self": ma.URLFor("api.get_nonviolent_tactic", values=dict(id="<id>")),
+            "collection": ma.URLFor("api.get_nonviolent_tactics"),
+            "organization": ma.URLFor("api.get_org", values=dict(facId="<facId>"))
         }
     )
 
 
-class LikesInputSchema(Schema):
+class NonviolentTacticsInputSchema(Schema):
     # Required fields
-    user_id = fields.Int(description="Liking user's id.", required=True)
-    post_id = fields.Int(description="Liked post id.", required=True)
+    facId = fields.Int(description="Organizations faction ID (facId)", required=True)
+    year = fields.Int(description="Violent activity year", required=True)
 
-    # Optional Fields
-    created_at = fields.DateTime(description="Time of like.")
+    # Optional fields
+    economicNoncooperation = fields.Int(description="Economic non-cooperation.")
+    protestDemonstration = fields.Int(description="Protest or demonstration.")
+    nonviolentIntervention = fields.Int(description="Nonviolent Intervention.")
+    socialNoncooperation = fields.Int(description="Social non-cooperation.")
+    institutionalAction = fields.Int(description="Institutional action.")
+    politicalNoncooperation = fields.Int(description="Political non-cooperation.")
+
+    created_at = fields.DateTime(description="Time of row creation.")
+    modified_at = fields.DateTime(description="Time of most recent modification.")
+
+
+class OrganizationSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        type_ = "organizations"
+        model = Organizations
+        includes_fk = True
+        fields = (
+            "facId",
+            "kgcId",
+            "facName",
+            "startYear",
+            "endYear",
+            "created_at",
+            "modified_at",
+            "_links"
+        )
+
+    # Links
+    _links = ma.Hyperlinks(
+        {
+            "self": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
+            "collection": ma.URLFor("api.get_orgs"),
+            "group": ma.URLFor("api.get_group", values=dict(kgcId="<kgcId>")),
+            "violentActions": ma.URLFor("api.get_violent_actions", values=dict(facId="<facId>")),
+            "nonviolentActions": ma.URLFor("api.get_nonviolent_actions", values=dict(facId="<facId>"))
+        }
+    )
+
+
+class OrganizationInputSchema(Schema):
+    # Required fields
+    facId = fields.Int(description="Organizations faction ID (facId)", required=True)
+    kgcId = fields.Int(description="Separatist ethnolinguistic group ID (kgcId).", required=True)
+    facName = fields.String(description="Faction/organization name", required=True)
+    startYear = fields.Int(description="First year of organization's documented demands.", required=True)
+    endYear = fields.Int(description="Final year of organization's documented demands.", required=True)
+
+    # Optional fields
+    created_at = fields.DateTime(description="Time of row creation.")
+    modified_at = fields.DateTime(description="Time of most recent modification.")
+
+
+class GroupSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        type_ = "groups"
+        model = Groups
+        includes_fk = True
+        fields = (
+            "kgcId",
+            "groupName",
+            "country",
+            "startYear",
+            "endYear",
+            "created_at",
+            "modified_at",
+            "_links"
+        )
+
+    # Links
+    _links = ma.Hyperlinks(
+        {
+            "self": ma.URLFor("api.get_group", values=dict(kgcId="<kgcId>")),
+            "collection": ma.URLFor("api.get_groups"),
+            "organizations": ma.URLFor("api.get_orgs", values=dict(kgcId="<kgcId>"))
+        }
+    )
+
+class GroupInputSchema(Schema):
+    # Required fields
+    kgcId = fields.Int(description="Separatist ethnolinguistic group ID (kgcId).", required=True)
+    groupName = fields.String(description="Ethnolinguistic group name.", required=True)
+    country = fields.String(description="Country where ethnolinguistic group resides.", required=True)
+    startYear = fields.Int(description="First year that an organization from the ethnolinguistic group made claims for greater autonomy.", required=True)
+    endYear = fields.Int(description="Final year that an organization from the ethnolinguistic group made claims for greater autonomy.", required=True)
+
+    # Optional fields
+    created_at = fields.DateTime(description="Time of row creation.")
     modified_at = fields.DateTime(description="Time of most recent modification.")
 
 
@@ -129,127 +253,33 @@ class UserInputSchema(Schema):
     name = fields.String(description="User's name.", required=True)
 
     # optional fields
-    about_me = fields.String(description="User's short description.")
     last_seen = fields.DateTime(description="User's last log on time.")
-
-
-class CommentsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        type_ = "comments"
-        model = Comments
-        include_fk = True
-
-    # Links
-    _links = ma.Hyperlinks(
-        {
-            "parent": ma.URLFor("api.get_post", values=dict(id="<parent_id>")),
-            "comment": ma.URLFor("api.get_post", values=dict(id="<comment_id>")),
-        }
-    )
-
-
-class CommentsInputSchema(Schema):
-    # Required fields
-    parent_id = fields.Int(description="Parent post's id.", required=True)
-    comment_id = fields.Int(description="Comment post's id.", required=True)
-
-    # Optional fields
-    created_at = fields.DateTime(description="Time of comment.")
-    modified_at = fields.DateTime(description="Time of most recent modification.")
-
-
-class RepostsSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        type_ = "reposts"
-        model = Reposts
-        include_fk = True
-
-    # Links
-    _links = ma.Hyperlinks(
-        {
-            "root": ma.URLFor("api.get_post", values=dict(id="<root_id>")),
-            "repost": ma.URLFor("api.get_post", values=dict(id="<repost_id>")),
-        }
-    )
-
-
-class RepostsInputSchema(Schema):
-    # Required fields
-    root_id = fields.Int(description="Root post's id.", required=True)
-    repost_id = fields.Int(description="Repost post's id.", required=True)
-
-    # Optional fields
-    created_at = fields.DateTime(description="Time of repost.")
-    modified_at = fields.DateTime(description="Time of most recent modification.")
-
-
-class PostSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        type_ = "posts"
-        model = Post
-        include_fk = True
-
-    # Relationships
-    author = ma.Nested(UserSchema)
-    comments = ma.Nested(CommentsSchema(many=True))
-    reposts = ma.Nested(RepostsSchema(many=True))
-
-    # Links
-    _links = ma.Hyperlinks(
-        {
-            "self": ma.URLFor("api.get_post", values=dict(id="<id>")),
-            "collection": ma.URLFor("api.get_posts"),
-        }
-    )
-
-
-class PostInputSchema(Schema):
-    # Required inputs
-    body = fields.String(description="Post body.", required=True)
-
-    # Optional inputs
-    id = fields.Int(description="Post id.")
-    user_id = fields.Int(description="Author id.")
-    created_at = fields.DateTime(description="Time posted.")
-    modified_at = fields.DateTime(description="Time of most recent modification.")
-    media_url = fields.URL(description="Link to s3-hosted media.")
-    media_class = fields.String(description="Media 'bucket' in s3.")
-    media_type = fields.String(
-        description="Media type. One of ['audio', 'videos', 'photos']."
-    )
-    language = fields.String(description="Post language.")
-    is_repost = fields.Boolean(description="Whether post is a repost.")
-    is_comment = fields.Boolean(description="Whether post is a comment.")
 
 
 # register schemas with spec
 names = [
-    "Follows",
-    "FollowsInput",
-    "Likes",
-    "LikesInput",
+    "NonviolentTactics",
+    "NonviolentTacticsInput",
+    "ViolentTactics",
+    "ViolentTacticsInput",
+    "Groups",
+    "GroupsInput",
+    "Organizations",
+    "OrganizationsInput"
     "User",
     "UserInput",
-    "Comments",
-    "CommentsInput",
-    "Reposts",
-    "RepostsInput",
-    "Post",
-    "PostInput",
 ]
 schemas = [
-    FollowSchema,
-    FollowInputSchema,
-    LikesSchema,
-    LikesInputSchema,
+    NonviolentTacticsSchema,
+    NonviolentTacticsInputSchema,
+    ViolentTacticsSchema,
+    ViolentTacticsInputSchema,
+    GroupSchema,
+    GroupInputSchema,
+    OrganizationSchema,
+    OrganizationInputSchema,
     UserSchema,
-    UserInputSchema,
-    CommentsSchema,
-    CommentsInputSchema,
-    RepostsSchema,
-    RepostsInputSchema,
-    PostSchema,
-    PostInputSchema,
+    UserInputSchema
 ]
 for name, schema in zip(names, schemas):
     spec.components.schema(name, schema=schema)
