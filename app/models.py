@@ -3,17 +3,18 @@ from dateutil import parser
 from hashlib import md5
 from time import time
 from flask import current_app, url_for
-# from flask_login import UserMixin, AnonymousUserMixin
-# from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, AnonymousUserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.sql import func
+
 # from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.dialects.mysql import TINYINT
 from operator import itemgetter
-# import jwt
-# import json
-# import os
-# import base64
+import jwt
+import json
+import os
+import base64
 from app import db, login
 
 
@@ -22,6 +23,7 @@ class AuditMixin(object):
     modified_at = db.Column(
         db.DateTime(timezone=True), default=func.now(), onupdate=func.now(), index=True
     )
+
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -53,24 +55,39 @@ class ViolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "violence"
 
     id = db.Column(db.Integer, primary_key=True)
-    facId = db.Column("facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True)
+    facId = db.Column(
+        "facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True
+    )
     year = db.Column(db.Integer)
     againstState = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
     againstStateFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
     againstOrg = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
     againstOrgFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
     againstIngroup = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstIngroupFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
+    againstIngroupFatal = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
     againstOutgroup = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstOutgroupFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
+    againstOutgroupFatal = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
 
     def __repr__(self):
         return f"<Violent Tactics - org: {self.organization}, facId: {self.facId}, year: {self.year}>"
 
     def from_dict(self, data):
-        for field in ["facId", "year", "againstState", "againstStateFatal", "againstOrg",
-                      "againstOrgFatal", "againstIngroup", "againstIngroupFatal",
-                      "againstOutgroup", "againstOutgroupFatal"]:
+        for field in [
+            "facId",
+            "year",
+            "againstState",
+            "againstStateFatal",
+            "againstOrg",
+            "againstOrgFatal",
+            "againstIngroup",
+            "againstIngroupFatal",
+            "againstOutgroup",
+            "againstOutgroupFatal",
+        ]:
             if field in data:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
@@ -85,22 +102,43 @@ class NonviolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "nonviolence"
 
     id = db.Column(db.Integer, primary_key=True)
-    facId = db.Column("facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True)
+    facId = db.Column(
+        "facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True
+    )
     year = db.Column(db.Integer)
-    economicNoncooperation = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    protestDemonstration = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    nonviolentIntervention = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    socialNoncooperation = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    institutionalAction = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    politicalNoncooperation = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
+    economicNoncooperation = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
+    protestDemonstration = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
+    nonviolentIntervention = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
+    socialNoncooperation = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
+    institutionalAction = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
+    politicalNoncooperation = db.Column(
+        TINYINT(1, unsigned=True), nullable=False, default=0
+    )
 
     def __repr__(self):
         return f"<Nonviolent Tactics - org: {self.organization}, facId: {self.facId}, year: {self.year}>"
 
     def from_dict(self, data):
-        for field in ["facId", "year", "economicNoncooperation", "protestDemonstration",
-                      "nonviolentIntervention", "socialNoncooperation", "institutionalAction",
-                      "politicalNoncooperation"]:
+        for field in [
+            "facId",
+            "year",
+            "economicNoncooperation",
+            "protestDemonstration",
+            "nonviolentIntervention",
+            "socialNoncooperation",
+            "institutionalAction",
+            "politicalNoncooperation",
+        ]:
             if field in data:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
@@ -142,7 +180,9 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     facId = db.Column(db.Integer, nullable=False, unique=True, primary_key=True)
-    kgcId = db.Column(db.Integer, db.ForeignKey("groups.kgcId")) # Might not be necessary if we can indirectly ref via the group backref
+    kgcId = db.Column(
+        db.Integer, db.ForeignKey("groups.kgcId")
+    )  # Might not be necessary if we can indirectly ref via the group backref
     facName = db.Column(db.String(2047), index=True, unique=True)
     startYear = db.Column(db.Integer)
     endYear = db.Column(db.Integer)
@@ -151,21 +191,21 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
         foreign_keys=[NonviolentTactics.facId],
         backref=db.backref("organization", lazy="joined"),
         lazy="dynamic",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     violentTactics = db.relationship(
         "ViolentTactics",
         foreign_keys=[ViolentTactics.facId],
         backref=db.backref("organization", lazy="joined"),
         lazy="dynamic",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):
         return f"<Organization: {self.facName}, facId: {self.facId}>"
 
     def from_dict(self, data):
-        for field in ['facId', 'kgcId', 'facName', 'startYear', 'endYear']:
+        for field in ["facId", "kgcId", "facName", "startYear", "endYear"]:
             if field in data:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
@@ -176,101 +216,101 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
                 setattr(self, field, func.now())
 
 
-# class User(UserMixin, SearchableMixin, PaginatedAPIMixin, AuditMixin, db.Model):
-#     __searchable__ = ["username", "about_me", "name"]
+class User(UserMixin, SearchableMixin, PaginatedAPIMixin, AuditMixin, db.Model):
+    __tablename__ = "user"
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(64), index=True, unique=True)
-#     email = db.Column(db.String(120), index=True, unique=True)
-#     name = db.Column(db.String(120), index=True)
-#     password_hash = db.Column(db.String(128))
-#     token = db.Column(db.String(32), index=True, unique=True)
-#     token_expiration = db.Column(db.DateTime)
-#     is_admin = db.Column(db.Boolean, default=False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    name = db.Column(db.String(120), index=True)
+    password_hash = db.Column(db.String(128))
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
+    is_admin = db.Column(db.Boolean, default=False)
 
-#     def __init__(self, **kwargs):
-#         super(User, self).__init__(**kwargs)
-#         if self.email and self.email in current_app.config["ADMINS"]:
-#             self.is_admin = True
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.email and self.email in current_app.config["ADMINS"]:
+            self.is_admin = True
 
-#     def __repr__(self):
-#         return "<User {}>".format(self.username)
+    def __repr__(self):
+        return "User <id: {}, username: {}>".format(self.id, self.username)
 
-#     def set_password(self, password):
-#         self.password_hash = generate_password_hash(password)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-#     def check_password(self, password):
-#         return check_password_hash(self.password_hash, password)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
-#     def get_reset_password_token(self, expires_in=600):
-#         return jwt.encode(
-#             {"reset_password": self.id, "exp": time() + expires_in},
-#             current_app.config["SECRET_KEY"],
-#             algorithm="HS256",
-#         ).decode("utf-8")
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {"reset_password": self.id, "exp": time() + expires_in},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        ).decode("utf-8")
 
-#     @staticmethod
-#     def verify_reset_password_token(token):
-#         try:
-#             id = jwt.decode(
-#                 token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
-#             )["reset_password"]
-#         except:
-#             return
-#         return User.query.get(id)
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(
+                token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+            )["reset_password"]
+        except:
+            return
+        return User.query.get(id)
 
-#     def from_dict(self, data, new_user=False):
-#         if "id" in data:
-#             setattr(self, "id", data["id"])
-#         for field in ["username", "name", "email", "about_me"]:
-#             if field in data:
-#                 setattr(self, field, data[field])
-#         for field in ["last_seen", "created_at", "modified_at"]:
-#             if field in data:
-#                 dtime_obj = parser.parse(data[field])
-#                 setattr(self, field, dtime_obj)
-#             else:
-#                 setattr(self, field, func.now())
-#         if new_user:
-#             if "password" in data:
-#                 self.set_password(data["password"])
-#             if "email" in data and data["email"] in current_app.config["ADMINS"]:
-#                 setattr(self, "is_admin", True)
+    def from_dict(self, data, new_user=False):
+        if "id" in data:
+            setattr(self, "id", data["id"])
+        for field in ["username", "name", "email", "about_me"]:
+            if field in data:
+                setattr(self, field, data[field])
+        for field in ["last_seen", "created_at", "modified_at"]:
+            if field in data:
+                dtime_obj = parser.parse(data[field])
+                setattr(self, field, dtime_obj)
+            else:
+                setattr(self, field, func.now())
+        if new_user:
+            if "password" in data:
+                self.set_password(data["password"])
+            if "email" in data and data["email"] in current_app.config["ADMINS"]:
+                setattr(self, "is_admin", True)
 
-#     def get_token(self, expires_in=3600):
-#         now = datetime.utcnow()
-#         if self.token and self.token_expiration > now + timedelta(seconds=60):
-#             return self.token
-#         self.token = base64.b64encode(os.urandom(24)).decode("utf-8")
-#         self.token_expiration = now + timedelta(seconds=expires_in)
-#         db.session.add(self)
-#         return self.token
+    def get_token(self, expires_in=3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode("utf-8")
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
 
-#     def revoke_token(self):
-#         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
 
-#     @staticmethod
-#     def check_token(token):
-#         user = User.query.filter_by(token=token).first()
-#         if user is None or user.token_expiration < datetime.utcnow():
-#             return None
-#         return user
-
-
-# class Anonymous(AnonymousUserMixin):
-#     def __init__(self):
-#         self.username = "Guest"
-
-#     def is_admin(self):
-#         return False
-
-#     def __repr__(self):
-#         return "<anonymous user>"
+    @staticmethod
+    def check_token(token):
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
 
 
-# login.anonymous_user = Anonymous
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.username = "Guest"
+
+    def is_admin(self):
+        return False
+
+    def __repr__(self):
+        return "<anonymous user>"
 
 
-# @login.user_loader
-# def load_user(id):
-#     return User.query.get(int(id))
+login.anonymous_user = Anonymous
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

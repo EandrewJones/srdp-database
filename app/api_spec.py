@@ -7,7 +7,7 @@ from marshmallow import Schema, fields
 from flask import url_for
 from config import Config
 from app import ma
-from app.models import ViolentTactics, NonviolentTactics, Groups, Organizations
+from app.models import ViolentTactics, NonviolentTactics, Organizations, Organizations
 
 
 # Create an APISpec
@@ -56,7 +56,7 @@ class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
             "againstOutgroupFatal",
             "created_at",
             "modified_at",
-            "_links"
+            "_links",
         )
 
     # Links
@@ -64,7 +64,7 @@ class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
         {
             "self": ma.URLFor("api.get_violent_tactic", values=dict(id="<id>")),
             "collection": ma.URLFor("api.get_violent_tactics"),
-            "organizaation": ma.URLFor("api.get_org", values=dict(facId="<facId>"))
+            "organizaation": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
         }
     )
 
@@ -76,13 +76,27 @@ class ViolentTacticsInputSchema(Schema):
 
     # Optional fields
     againstState = fields.Int(description="Violent action taken against the state.")
-    againstStateFatal = fields.Int(description="Fatally violent action taken against the state.")
-    againstOrg = fields.Int(description="Violent action taken against another organization.")
-    againstOrgViolent = fields.Int(description="Fatally violent action taken against another organization.")
-    againstIngroup = fields.Int(description="Violent action taken against the ethnolinguistic in-group.")
-    againstIngroupFatal = fields.Int(description="Fatally violent action taken against the ethnolinguistic in-group.")
-    againstOutgroup = fields.Int(description="Violent action taken against an ethnolinguistic out-group.")
-    againstOutgroupFatal = fields.Int(description="Fatally violent action taken against an ethnolinguistic out-group.")
+    againstStateFatal = fields.Int(
+        description="Fatally violent action taken against the state."
+    )
+    againstOrg = fields.Int(
+        description="Violent action taken against another organization."
+    )
+    againstOrgViolent = fields.Int(
+        description="Fatally violent action taken against another organization."
+    )
+    againstIngroup = fields.Int(
+        description="Violent action taken against the ethnolinguistic in-group."
+    )
+    againstIngroupFatal = fields.Int(
+        description="Fatally violent action taken against the ethnolinguistic in-group."
+    )
+    againstOutgroup = fields.Int(
+        description="Violent action taken against an ethnolinguistic out-group."
+    )
+    againstOutgroupFatal = fields.Int(
+        description="Fatally violent action taken against an ethnolinguistic out-group."
+    )
 
     created_at = fields.DateTime(description="Time of row creation.")
     modified_at = fields.DateTime(description="Time of most recent modification.")
@@ -91,7 +105,7 @@ class ViolentTacticsInputSchema(Schema):
 class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         type_ = "nonviolence"
-        model = NonviolentTactics,
+        model = (NonviolentTactics,)
         include_fk = True
         fields = (
             "facId",
@@ -104,14 +118,14 @@ class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
             "politicalNoncooperation",
             "created_at",
             "modified_at",
-            "_links"
+            "_links",
         )
 
     _links = ma.Hyperlinks(
         {
             "self": ma.URLFor("api.get_nonviolent_tactic", values=dict(id="<id>")),
             "collection": ma.URLFor("api.get_nonviolent_tactics"),
-            "organization": ma.URLFor("api.get_org", values=dict(facId="<facId>"))
+            "organization": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
         }
     )
 
@@ -146,7 +160,7 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
             "endYear",
             "created_at",
             "modified_at",
-            "_links"
+            "_links",
         )
 
     # Links
@@ -154,9 +168,13 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
         {
             "self": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
             "collection": ma.URLFor("api.get_orgs"),
-            "group": ma.URLFor("api.get_group", values=dict(kgcId="<kgcId>")),
-            "violentActions": ma.URLFor("api.get_violent_actions", values=dict(facId="<facId>")),
-            "nonviolentActions": ma.URLFor("api.get_nonviolent_actions", values=dict(facId="<facId>"))
+            "group": ma.URLFor("api.get_group", values=dict(facId="<facId>")),
+            "violentTactics": ma.URLFor(
+                "api.get_violent_tactics", values=dict(facId="<facId>")
+            ),
+            "nonviolentTactics": ma.URLFor(
+                "api.get_nonviolent_tactics", values=dict(facId="<facId>")
+            ),
         }
     )
 
@@ -164,10 +182,16 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
 class OrganizationInputSchema(Schema):
     # Required fields
     facId = fields.Int(description="Organizations faction ID (facId)", required=True)
-    kgcId = fields.Int(description="Separatist ethnolinguistic group ID (kgcId).", required=True)
+    kgcId = fields.Int(
+        description="Separatist ethnolinguistic group ID (kgcId).", required=True
+    )
     facName = fields.String(description="Faction/organization name", required=True)
-    startYear = fields.Int(description="First year of organization's documented demands.", required=True)
-    endYear = fields.Int(description="Final year of organization's documented demands.", required=True)
+    startYear = fields.Int(
+        description="First year of organization's documented demands.", required=True
+    )
+    endYear = fields.Int(
+        description="Final year of organization's documented demands.", required=True
+    )
 
     # Optional fields
     created_at = fields.DateTime(description="Time of row creation.")
@@ -177,7 +201,7 @@ class OrganizationInputSchema(Schema):
 class GroupSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         type_ = "groups"
-        model = Groups
+        model = Organizations
         includes_fk = True
         fields = (
             "kgcId",
@@ -187,7 +211,7 @@ class GroupSchema(ma.SQLAlchemyAutoSchema):
             "endYear",
             "created_at",
             "modified_at",
-            "_links"
+            "_links",
         )
 
     # Links
@@ -195,17 +219,30 @@ class GroupSchema(ma.SQLAlchemyAutoSchema):
         {
             "self": ma.URLFor("api.get_group", values=dict(kgcId="<kgcId>")),
             "collection": ma.URLFor("api.get_groups"),
-            "organizations": ma.URLFor("api.get_orgs", values=dict(kgcId="<kgcId>"))
+            "organizations": ma.URLFor(
+                "api.get_group_organizations", values=dict(kgcId="<kgcId>")
+            ),
         }
     )
 
+
 class GroupInputSchema(Schema):
     # Required fields
-    kgcId = fields.Int(description="Separatist ethnolinguistic group ID (kgcId).", required=True)
+    kgcId = fields.Int(
+        description="Separatist ethnolinguistic group ID (kgcId).", required=True
+    )
     groupName = fields.String(description="Ethnolinguistic group name.", required=True)
-    country = fields.String(description="Country where ethnolinguistic group resides.", required=True)
-    startYear = fields.Int(description="First year that an organization from the ethnolinguistic group made claims for greater autonomy.", required=True)
-    endYear = fields.Int(description="Final year that an organization from the ethnolinguistic group made claims for greater autonomy.", required=True)
+    country = fields.String(
+        description="Country where ethnolinguistic group resides.", required=True
+    )
+    startYear = fields.Int(
+        description="First year that an organization from the ethnolinguistic group made claims for greater autonomy.",
+        required=True,
+    )
+    endYear = fields.Int(
+        description="Final year that an organization from the ethnolinguistic group made claims for greater autonomy.",
+        required=True,
+    )
 
     # Optional fields
     created_at = fields.DateTime(description="Time of row creation.")
@@ -234,13 +271,6 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         {
             "self": ma.URLFor("api.get_user", values=dict(id="<id>")),
             "collection": ma.URLFor("api.get_users"),
-            "posts": ma.URLFor("api.get_user_posts", values=dict(id="<id>")),
-            "followers": ma.URLFor("api.get_followers", values=dict(id="<id>")),
-            "followed": ma.URLFor("api.get_followed", values=dict(id="<id>")),
-            "liked_posts": ma.URLFor("api.get_liked_posts", values=dict(id="<id>")),
-            "followed_posts": ma.URLFor(
-                "api.get_followed_posts", values=dict(id="<id>")
-            ),
         }
     )
 
@@ -265,7 +295,7 @@ names = [
     "Groups",
     "GroupsInput",
     "Organizations",
-    "OrganizationsInput"
+    "OrganizationsInput",
     "User",
     "UserInput",
 ]
@@ -279,7 +309,7 @@ schemas = [
     OrganizationSchema,
     OrganizationInputSchema,
     UserSchema,
-    UserInputSchema
+    UserInputSchema,
 ]
 for name, schema in zip(names, schemas):
     spec.components.schema(name, schema=schema)

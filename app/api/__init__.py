@@ -11,4 +11,12 @@ swagger_ui_blueprint = get_swaggerui_blueprint(
 
 bp = Blueprint("api", __name__)
 
-from app.api import users, errors, tokens, posts, follows, comments, reposts, likes
+from app.api import (
+    users,
+    errors,
+    tokens,
+    groups,
+    organizations,
+    violent_tactics,
+    nonviolent_tactics,
+)

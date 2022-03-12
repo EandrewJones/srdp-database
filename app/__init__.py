@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
-from flask import Flask, request, current_app
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -9,6 +9,7 @@ from flask_login import LoginManager
 from flask_admin import Admin
 from flask_mail import Mail
 from flask_cors import CORS
+from flask_babel import lazy_gettext as _l
 from config import Config
 
 db = SQLAlchemy()
