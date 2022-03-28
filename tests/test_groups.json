@@ -1,0 +1,23 @@
+[
+    {
+        "kgcId": "1",
+        "groupName": "Group4",
+        "country": "testCountry",
+        "startYear": "1999",
+        "endYear": "2000"
+    },
+    {
+        "kgcId": "2",
+        "groupName": "Group5",
+        "country": "testCountry",
+        "startYear": "1999",
+        "endYear": "2000"
+    },
+    {
+        "kgcId": "3",
+        "groupName": "Group6",
+        "country": "testCountry",
+        "startYear": "1999",
+        "endYear": "2000"
+    }
+]

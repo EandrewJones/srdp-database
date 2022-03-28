@@ -1,0 +1,50 @@
+[
+    {
+        "facId": 1001,
+        "year": 1999,
+        "againstState": 1,
+        "againstStateFatal": 1,
+        "againstOrg": 0,
+        "againstOrgFatal": 0,
+        "againstIngroup": 0,
+        "againstIngroupFatal": 0,
+        "againstOutgroup": 0,
+        "againstOutgroupFatal": 0
+    },
+    {
+        "facId": 1002,
+        "year": 1999,
+        "againstState": 1,
+        "againstStateFatal": 1,
+        "againstOrg": 1,
+        "againstOrgFatal": 1,
+        "againstIngroup": 1,
+        "againstIngroupFatal": 0,
+        "againstOutgroup": 1,
+        "againstOutgroupFatal": 0
+    },
+    {
+        "facId": 1002,
+        "year": 1999,
+        "againstState": 0,
+        "againstStateFatal": 0,
+        "againstOrg": 1,
+        "againstOrgFatal": 1,
+        "againstIngroup": 0,
+        "againstIngroupFatal": 1,
+        "againstOutgroup": 1,
+        "againstOutgroupFatal": 0
+    },
+    {
+        "facId": 2001,
+        "year": 2000,
+        "againstState": 0,
+        "againstStateFatal": 0,
+        "againstOrg": 0,
+        "againstOrgFatal": 0,
+        "againstIngroup": 0,
+        "againstIngroupFatal": 0,
+        "againstOutgroup": 0,
+        "againstOutgroupFatal": 0
+    }
+]

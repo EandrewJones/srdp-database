@@ -1,0 +1,42 @@
+[
+    {
+        "facId": 1001,
+        "year": 1999,
+        "economicNoncooperation": 0,
+        "protestDemonstration": 1,
+        "nonviolentIntervention": 0,
+        "socialNoncooperation": 0,
+        "institutionalAction": 0,
+        "politicalNoncooperation": 1
+    },
+    {
+        "facId": 1001,
+        "year": 2000,
+        "economicNoncooperation": 0,
+        "protestDemonstration": 1,
+        "nonviolentIntervention": 1,
+        "socialNoncooperation": 0,
+        "institutionalAction": 0,
+        "politicalNoncooperation": 0
+    },
+    {
+        "facId": 1002,
+        "year": 1999,
+        "economicNoncooperation": 1,
+        "protestDemonstration": 1,
+        "nonviolentIntervention": 1,
+        "socialNoncooperation": 1,
+        "institutionalAction": 0,
+        "politicalNoncooperation": 0
+    },
+    {
+        "facId": 2001,
+        "year": 2000,
+        "economicNoncooperation": 0,
+        "protestDemonstration": 0,
+        "nonviolentIntervention": 0,
+        "socialNoncooperation": 0,
+        "institutionalAction": 1,
+        "politicalNoncooperation": 1
+    }
+]
