@@ -45,6 +45,9 @@ FLASK_PID=$(pgrep -f "flask run")
 # Create admin user and authenticate #
 # ================================== #
 
+# Fetch first admin email
+ADMIN_EMAIL="$(echo $ADMIN_EMAILS | jq -r '.[0]')"
+
 # Create a new users
 create_user () {
     http POST $BASE_URL/users \
@@ -54,7 +57,7 @@ create_user () {
     password="$4"
 }
 
-admin=(eajones3 Evan\ Jones $ADMIN_EMAILS $ADMIN_PASSWORD)
+admin=(admin Evan\ Jones $ADMIN_EMAIL $ADMIN_PASSWORD)
 
 create_user "${admin[@]}"
 
