@@ -9,7 +9,7 @@
 shopt -s extglob
 
 # Load and check environment variables
-eval "$(shdotenv)"
+eval "$(shdotenv -e ../.env)"
 
 # Check that it's up
 # CHECK_URL='http://localhost:5000'
