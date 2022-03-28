@@ -3,7 +3,14 @@
 # this script is used to boot a Docker container
 source venv/bin/activate
 while true; do
+    # If dev mode, run migration
+    if [ -v DEV_MODE ]; then
+        flask db migrate
+    fi
+
+    # Run dp upgrade
     flask db upgrade
+
     if [[ "$?" == "0" ]]; then
         break
     fi
@@ -14,4 +21,4 @@ done
 # Create default admin
 flask create-admin
 
-gunicorn --workers 8 -b :5000 --access-logfile - --error-logfile - srdp:app
+exec gunicorn --workers 8 -b :5000 --access-logfile - --error-logfile - srdp:app
