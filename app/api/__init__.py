@@ -17,7 +17,7 @@ bp = Blueprint("api", __name__, cli_group=None)
 @bp.cli.command("create-admin")
 def create_admin():
     uname = Config.ADMIN_USERNAME
-    email = Config.ADMIN_EMAIL
+    email = Config.ADMIN_EMAIL[0] # select first admin email
     pword = Config.ADMIN_PASSWORD
     # Check if admin user already exists
     admin_exists = User.query.filter_by(username=uname).first() is not None

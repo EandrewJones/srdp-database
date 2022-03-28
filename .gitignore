@@ -1,0 +1,15 @@
+# Files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.env
+*.db
+
+# Folders
+venv/
+__pycache__/
+demo/
+logs/
+.vscode/
+.ipynb_checkpoints/

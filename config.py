@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 
 
@@ -30,5 +31,5 @@ class Config(object):
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME") or "admin"
-    ADMIN_EMAIL = os.environ.get("ADMIN_EMAILS")
+    ADMIN_EMAIL = json.loads(os.environ.get("ADMIN_EMAILS"))
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
