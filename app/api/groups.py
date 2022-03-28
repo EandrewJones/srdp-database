@@ -1,10 +1,9 @@
 from flask import jsonify, request, url_for
-from marshmallow import ValidationError
 from app import db
 from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
-from app.api_spec import GroupSchema, OrganizationSchema, GroupInputSchema
+from app.api_spec import GroupSchema, OrganizationSchema
 from app.models import Groups, Organizations, Organizations
 
 

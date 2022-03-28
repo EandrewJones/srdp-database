@@ -154,7 +154,7 @@ def update_user(id):
           description: call successful
           content:
             application/json:
-              schema: PostSchema
+              schema: UserSchema
         '401':
           description: Not authenticated
         '204':

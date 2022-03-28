@@ -1,10 +1,9 @@
-from flask import jsonify, request, url_for, abort
-from marshmallow import ValidationError
+from flask import jsonify, request, url_for
 from app import db
 from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
-from app.api_spec import ViolentTacticsSchema, ViolentTacticsInputSchema
+from app.api_spec import ViolentTacticsSchema
 from app.models import ViolentTactics
 
 

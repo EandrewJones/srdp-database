@@ -1,16 +1,12 @@
 from flask import jsonify, request, url_for
-from marshmallow import ValidationError
 from app import db
 from app.api import bp
 from app.api.groups import get_group
-from app.api.violent_tactics import get_violent_tactics
-from app.api.nonviolent_tactics import get_nonviolent_tactics
 from app.api.auth import token_auth
 from app.api.errors import bad_request
 from app.api_spec import (
     NonviolentTacticsSchema,
     OrganizationSchema,
-    OrganizationInputSchema,
     ViolentTacticsSchema,
 )
 from app.models import NonviolentTactics, Organizations, ViolentTactics
