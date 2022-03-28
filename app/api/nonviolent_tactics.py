@@ -11,10 +11,11 @@ from app.api_spec import (
 from app.models import NonviolentTactics
 
 
-@bp.route("/nonviolent_tactics?id=<int:id>", methods=["GET"])
+@bp.route("/nonviolent_tactics/<int:id>", methods=["GET"])
 @token_auth.login_required
 def get_nonviolent_tactic(id):
     """
+    ---
     get:
       summary: Get nonviolent tactic by id
       description: retrieve nonviolent tactic by id
@@ -40,10 +41,15 @@ def get_nonviolent_tactic(id):
         - NonviolentTactics
     """
     nonviolent_tactic = NonviolentTactics.query.get_or_404(id)
-    return NonviolentTacticsSchema.dump(nonviolent_tactic)
+    response = jsonify(NonviolentTacticsSchema().dump(nonviolent_tactic))
+    response.status_code = 200
+    response.headers["Location"] = url_for(
+        "api.get_nonviolent_tactic", id=nonviolent_tactic.id
+    )
+    return response
 
 
-@bp.route("/nonviolent_tactics", method=["GET"])
+@bp.route("/nonviolent_tactics", methods=["GET"])
 @token_auth.login_required
 def get_nonviolent_tactics():
     """
@@ -63,47 +69,18 @@ def get_nonviolent_tactics():
         '401':
           description: Not authenticated
       tags:
-        - nonviolent_tactics
+        - NonviolentTactics
     """
     page = request.args.get("page", 1, type=int)
     per_page = min(request.args.get("per_page", 10, type=int), 100)
     data = NonviolentTactics.to_collection_dict(
-        NonviolentTactics.query, page, per_page, NonviolentTacticsSchema, "api.get_orgs"
+        NonviolentTactics.query,
+        page,
+        per_page,
+        NonviolentTacticsSchema,
+        "api.get_nonviolent_tactics",
     )
     return jsonify(data)
-
-
-@bp.route("/nonviolent_tactics?facId=<int:facId>", method=["GET"])
-@token_auth.login_required
-def get_org_nonviolent_tactics(facId):
-    """
-    ---
-    get:
-      summary: Get nonviolent tactics filtered by facId
-      description: retrieve nonviolent tactics by facId
-      security:
-        - BasicAuth: []
-        - BearerAuth: []
-      parameters:
-        - in: path
-          name: facId
-          schema:
-            type: integer
-          required: true
-          description: Numeric facId of the organization to retrieve non-violent tactics for
-      responses:
-        '200':
-          description: call successful
-          content:
-            application/json:
-              schema: NonviolentTacticsSchema
-        '401':
-          description: Not authenticated
-      tags:
-        - NonviolentTactics
-    """
-    nonviolent_tactics = NonviolentTactics.query.filter_by(facId=facId).all()
-    return NonviolentTacticsSchema(many=True).dump(nonviolent_tactics)
 
 
 @bp.route("/nonviolent_tactics", methods=["POST"])
@@ -134,24 +111,21 @@ def create_nonviolent_tactics():
         - NonviolentTactics
     """
     data = request.get_json() or {}
-    if "body" not in data:
-        return bad_request("must include body field")
     # If single entry, regular add
     if isinstance(data, dict):
         if "id" in data and NonviolentTactics.query.filter_by(id=data["id"]).first():
             return bad_request(
                 f"id {data['id']} already taken; please use a different id."
             )
-        try:
-            nonviolent_tactic = NonviolentTacticsInputSchema().load(data)
-        except ValidationError as err:
-            print(err.messages)
-            print(err.valid_data)
+        nonviolent_tactic = NonviolentTactics()
+        nonviolent_tactic.from_dict(data)
         db.session.add(nonviolent_tactic)
+        db.session.commit()
         response = jsonify(NonviolentTacticsSchema().dump(nonviolent_tactic))
         response.status_code = 201
     # If multiple entries, bulk save
     if isinstance(data, list):
+        nonviolent_tactics = []
         for entry in data:
             if (
                 "id" in entry
@@ -160,25 +134,22 @@ def create_nonviolent_tactics():
                 return bad_request(
                     f"id {data['id']} already taken; please use a different id."
                 )
-        try:
-            nonviolent_tactics = NonviolentTacticsInputSchema(many=True).load(data)
-        except ValidationError as err:
-            print(err.messages)
-            print(err.valid_data)
-        db.session.bulk_save_objects(nonviolent_tactics)
+            nonviolent_tactic = NonviolentTactics()
+            nonviolent_tactic.from_dict(entry)
+            nonviolent_tactics.append(nonviolent_tactic)
+        db.session.add_all(nonviolent_tactics)
         db.session.commit()
         response = jsonify(NonviolentTacticsSchema(many=True).dump(nonviolent_tactics))
         response.status_code = 201
-        response.headers["Location"] = url_for(
-            "api.get_nonviolent_tactics"
-        )  # Might cause problems
+        response.headers["Location"] = url_for("api.get_nonviolent_tactics")
     return response
 
 
-@bp.route("/nonviolent_tactics?id=<int:id>", methods=["PUT"])
+@bp.route("/nonviolent_tactics/<int:id>", methods=["PUT"])
 @token_auth.login_required
 def update_nonviolent_tactic(id):
     """
+    ---
     put:
       summary: Modify a nonviolent tactic entry
       description: modify a nonviolent tactic by authorized user
@@ -212,22 +183,21 @@ def update_nonviolent_tactic(id):
     """
     nonviolent_tactic = NonviolentTactics.query.get_or_404(id)
     data = request.get_json() or {}
-    if "body" not in data:
-        return bad_request("must include body field")
     nonviolent_tactic.from_dict(data)
     db.session.commit()
     response = jsonify(NonviolentTacticsSchema().dump(nonviolent_tactic))
     response.status_code = 200
     response.headers["Location"] = url_for(
-        "api.get_nonviolent_tactic", facId=nonviolent_tactic.id
+        "api.get_nonviolent_tactic", id=nonviolent_tactic.id
     )
     return response
 
 
-@bp.route("nonviolent_tactics?id=<int:id>", methods=["DELETE"])
+@bp.route("nonviolent_tactics/<int:id>", methods=["DELETE"])
 @token_auth.login_required
 def delete_nonviolent_tactic(id):
     """
+    ---
     delete:
       summary: Delete a nonviolent tactic entry
       description: delete nonviolent tactic by authorized user
@@ -246,7 +216,7 @@ def delete_nonviolent_tactic(id):
           description: Not authenticated
         '204':
           description: no content
-      tags
+      tags:
         - NonviolentTactics
     """
     nonviolent_tactic = NonviolentTactics.query.get_or_404(id)

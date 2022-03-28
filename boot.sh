@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
 # this script is used to boot a Docker container
 source venv/bin/activate
 while true; do
@@ -9,5 +10,8 @@ while true; do
     echo Deploy command failed, retrying in 5 secs...
     sleep 5
 done
-flask translate compile
-exec gunicorn --workers 8 -b :5000 --access-logfile - --error-logfile - cssms:app
+
+# Create default admin
+flask create-admin
+
+gunicorn --workers 8 -b :5000 --access-logfile - --error-logfile - srdp:app

@@ -7,7 +7,13 @@ from marshmallow import Schema, fields
 from flask import url_for
 from config import Config
 from app import ma
-from app.models import ViolentTactics, NonviolentTactics, Organizations, Organizations
+from app.models import (
+    User,
+    ViolentTactics,
+    NonviolentTactics,
+    Organizations,
+    Organizations,
+)
 
 
 # Create an APISpec
@@ -44,6 +50,7 @@ class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
         model = ViolentTactics
         include_fk = True
         fields = (
+            "id",
             "facId",
             "year",
             "againstState",
@@ -62,9 +69,11 @@ class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     # Links
     _links = ma.Hyperlinks(
         {
-            "self": ma.URLFor("api.get_violent_tactic", values=dict(id="<id>")),
+            "self": ma.URLFor("api.get_violent_tactics", values=dict(id="<id>")),
             "collection": ma.URLFor("api.get_violent_tactics"),
-            "organizaation": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
+            "organizaation": ma.URLFor(
+                "api.get_organization", values=dict(facId="<facId>")
+            ),
         }
     )
 
@@ -105,9 +114,10 @@ class ViolentTacticsInputSchema(Schema):
 class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         type_ = "nonviolence"
-        model = (NonviolentTactics,)
+        model = NonviolentTactics
         include_fk = True
         fields = (
+            "id",
             "facId",
             "year",
             "economicNoncooperation",
@@ -125,7 +135,9 @@ class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
         {
             "self": ma.URLFor("api.get_nonviolent_tactic", values=dict(id="<id>")),
             "collection": ma.URLFor("api.get_nonviolent_tactics"),
-            "organization": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
+            "organization": ma.URLFor(
+                "api.get_organization", values=dict(facId="<facId>")
+            ),
         }
     )
 
@@ -166,14 +178,14 @@ class OrganizationSchema(ma.SQLAlchemyAutoSchema):
     # Links
     _links = ma.Hyperlinks(
         {
-            "self": ma.URLFor("api.get_org", values=dict(facId="<facId>")),
-            "collection": ma.URLFor("api.get_orgs"),
-            "group": ma.URLFor("api.get_group", values=dict(facId="<facId>")),
+            "self": ma.URLFor("api.get_organization", values=dict(facId="<facId>")),
+            "collection": ma.URLFor("api.get_organizations"),
+            "group": ma.URLFor("api.get_group", values=dict(kgcId="<kgcId>")),
             "violentTactics": ma.URLFor(
-                "api.get_violent_tactics", values=dict(facId="<facId>")
+                "api.get_org_violent_tactics", values=dict(facId="<facId>")
             ),
             "nonviolentTactics": ma.URLFor(
-                "api.get_nonviolent_tactics", values=dict(facId="<facId>")
+                "api.get_org_nonviolent_tactics", values=dict(facId="<facId>")
             ),
         }
     )
@@ -260,7 +272,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             "about_me",
             "email",
             "id",
-            "last_seen",
+            "is_admin",
             "created_at",
             "modified_at",
             "_links",
@@ -281,9 +293,6 @@ class UserInputSchema(Schema):
     email = fields.String(description="User's email.", required=True)
     password = fields.String(description="User's password.", required=True)
     name = fields.String(description="User's name.", required=True)
-
-    # optional fields
-    last_seen = fields.DateTime(description="User's last log on time.")
 
 
 # register schemas with spec

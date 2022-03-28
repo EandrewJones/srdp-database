@@ -1,11 +1,10 @@
 from flask import jsonify
-from app import create_app, db, cli
-from app.models import User, Post, Reposts, Message, Likes, Comments, Notification, Task
+from app import create_app, db
+from app.models import User, Groups, NonviolentTactics, ViolentTactics, Organizations
 from app.api_spec import spec
 
 
 app = create_app()
-cli.register(app)
 
 
 with app.test_request_context():
@@ -28,11 +27,8 @@ def make_shell_context():
     return {
         "db": db,
         "User": User,
-        "Post": Post,
-        "Reposts": Reposts,
-        "Message": Message,
-        "Likes": Likes,
-        "Comments": Comments,
-        "Notification": Notification,
-        "Task": Task,
+        "Groups": Groups,
+        "NonviolentTactics": NonviolentTactics,
+        "ViolentTactics": ViolentTactics,
+        "Organizations": Organizations,
     }

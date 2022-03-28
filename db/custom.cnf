@@ -6,7 +6,7 @@ default-character-set=utf8mb4
 
 [mysqld]
 character-set-client-handshake = FALSE
-init-connect='SET NAMES utf8mb4'
+init-connect='SET NAMES utf'
 # The server character set and collation are used as default values if the
 # database character set and collation are not specified in CREATE DATABASE
 # statements. They have no other purpose.

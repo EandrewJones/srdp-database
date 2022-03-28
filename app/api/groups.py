@@ -5,10 +5,10 @@ from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
 from app.api_spec import GroupSchema, OrganizationSchema, GroupInputSchema
-from app.models import Organizations, Organizations
+from app.models import Groups, Organizations, Organizations
 
 
-@bp.route("/groups", method=["GET"])
+@bp.route("/groups", methods=["GET"])
 @token_auth.login_required
 def get_groups():
     """
@@ -32,13 +32,13 @@ def get_groups():
     """
     page = request.args.get("page", 1, type=int)
     per_page = min(request.args.get("per_page", 10, type=int), 100)
-    data = Organizations.to_collection_dict(
-        Organizations.query, page, per_page, GroupSchema, "api.get_groups"
+    data = Groups.to_collection_dict(
+        Groups.query, page, per_page, GroupSchema, "api.get_groups"
     )
     return jsonify(data)
 
 
-@bp.route("/groups?kgcId=<int:kgcId>", method=["GET"])
+@bp.route("/groups/<int:kgcId>", methods=["GET"])
 @token_auth.login_required
 def get_group(kgcId):
     """
@@ -67,11 +67,11 @@ def get_group(kgcId):
       tags:
         - Groups
     """
-    group = Organizations.query.filter_by(kgcId=kgcId).first_or_404()
+    group = Groups.query.filter_by(kgcId=kgcId).first_or_404()
     return GroupSchema().dump(group)
 
 
-@bp.route("/groups/organizations?kgcId=<int:kgcId>", method=["GET"])
+@bp.route("/groups/<int:kgcId>/organizations", methods=["GET"])
 @token_auth.login_required
 def get_group_organizations(kgcId):
     """
@@ -102,7 +102,7 @@ def get_group_organizations(kgcId):
     """
     page = request.args.get("page", 1, type=int)
     per_page = min(request.args.get("per_page", 10, type=int), 100)
-    organizations = Organizations.query.filter_by(kgcId=kgcId).all()
+    organizations = Organizations.query.filter_by(kgcId=kgcId)
     data = Organizations.to_collection_dict(
         organizations,
         page,
@@ -142,26 +142,31 @@ def create_groups():
         - Groups
     """
     data = request.get_json() or {}
-    if "body" not in data:
-        return bad_request("must include body field")
     # If single entry, regular add
     if isinstance(data, dict):
-        if "id" in data and Organizations.query.filter_by(kgcId=data["kgcId"]).first():
+        if "kgcId" not in data:
+            return bad_request("must include kgcId field")
+        if (
+            "kgcId" in data
+            and Organizations.query.filter_by(kgcId=data["kgcId"]).first()
+        ):
             return bad_request(
                 f"kgcId {data['kgcId']} already taken; please use a different id."
             )
-        try:
-            group = GroupInputSchema().load(data)
-        except ValidationError as err:
-            print(err.messages)
-            print(err.valid_data)
+
+        group = Groups()
+        group.from_dict(data)
         db.session.add(group)
+        db.session.commit()
         response = jsonify(GroupSchema().dump(group))
         response.status_code = 201
         response.headers["Location"] = url_for("api.get_group", kgcId=group.kgcId)
     # If multiple entries, bulk save
     if isinstance(data, list):
+        groups = []
         for entry in data:
+            if "kgcId" not in entry:
+                return bad_request("must include kgcId field")
             if (
                 "kgcId" in entry
                 and Organizations.query.filter_by(kgcId=entry["kgcId"]).first()
@@ -169,12 +174,10 @@ def create_groups():
                 return bad_request(
                     f"kgcId {data['kgcId']} already taken; please use a different kgcId."
                 )
-        try:
-            groups = GroupInputSchema(many=True).load(data)
-        except ValidationError as err:
-            print(err.messages)
-            print(err.valid_data)
-        db.session.bulk_save_objects(groups)
+            group = Groups()
+            group.from_dict(entry)
+            groups.append(group)
+        db.session.add_all(groups)
         db.session.commit()
         response = jsonify(GroupSchema(many=True).dump(groups))
         response.status_code = 201
@@ -182,10 +185,11 @@ def create_groups():
     return response
 
 
-@bp.route("/groups?kgcId=<int:kgcId>", methods=["PUT"])
+@bp.route("/groups/<int:kgcId>", methods=["PUT"])
 @token_auth.login_required
 def update_group(kgcId):
     """
+    ---
     put:
       summary: Modify a group
       description: modify group by authorized user
@@ -217,10 +221,8 @@ def update_group(kgcId):
       tags:
         - Groups
     """
-    group = Organizations.query.filter_by(kgcId=kgcId).first_or_404()
+    group = Groups.query.filter_by(kgcId=kgcId).first_or_404()
     data = request.get_json() or {}
-    if "body" not in data:
-        return bad_request("must include body field")
     group.from_dict(data)
     db.session.commit()
     response = jsonify(GroupSchema().dump(group))
@@ -229,10 +231,11 @@ def update_group(kgcId):
     return response
 
 
-@bp.route("groups?kgcId=<int:kgcId>", methods=["DELETE"])
+@bp.route("groups/<int:kgcId>", methods=["DELETE"])
 @token_auth.login_required
 def delete_group(kgcId):
     """
+    ---
     delete:
       summary: Delete a group
       description: delete group by authorized user
@@ -254,7 +257,7 @@ def delete_group(kgcId):
       tags:
         - Groups
     """
-    group = Organizations.query.filter_by(kgcId=kgcId).first_or_404()
+    group = Groups.query.filter_by(kgcId=kgcId).first_or_404()
     db.session.delete(group)
     db.session.commit()
     return "", 204

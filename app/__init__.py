@@ -6,11 +6,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from flask_admin import Admin
+
+# from flask_admin import Admin
 from flask_mail import Mail
 from flask_cors import CORS
 from flask_babel import lazy_gettext as _l
 from config import Config
+
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -18,7 +20,6 @@ migrate = Migrate()
 login = LoginManager()
 login.login_view = "auth.login"
 login.login_message = _l("Please log in to access this page.")
-admin = Admin(template_mode="bootstrap4", name=Config.COVER_NAME)
 mail = Mail()
 cors = CORS()
 
@@ -29,9 +30,6 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     # Set up extensions
-    from app.administrator.views import RestrictedAdminView
-
-    admin.init_app(app, index_view=RestrictedAdminView(), endpoint="admin")
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
@@ -42,32 +40,22 @@ def create_app(config_class=Config):
     # Register Blueprints
     from app.errors import bp as errors_bp
 
-    app.register_blueprint(errors_bp)
-
-    from app.auth import bp as auth_bp
-
-    app.register_blueprint(auth_bp, url_prefix="/auth")
-
+    # from app.auth import bp as auth_bp
     from app.main import bp as main_bp
-
-    app.register_blueprint(main_bp)
-
     from app.api import bp as api_bp
-
-    app.register_blueprint(api_bp, url_prefix="/api")
-
     from app.api import swagger_ui_blueprint as swagger_bp
     from app.api import SWAGGER_URL
 
+    # from app.template_filters import bp as filter_bp
+    # from app.administrator import bp as admin_bp
+
+    app.register_blueprint(errors_bp)
+    # app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(main_bp)
+    app.register_blueprint(api_bp, url_prefix="/api", cli_group=None)
     app.register_blueprint(swagger_bp, url_prefix=SWAGGER_URL)
-
-    from app.template_filters import bp as filter_bp
-
-    app.register_blueprint(filter_bp)
-
-    from app.administrator import bp as admin_bp
-
-    app.register_blueprint(admin_bp)
+    # app.register_blueprint(filter_bp)
+    # app.register_blueprint(admin_bp)
 
     # Set up mail server and logging
     if not app.debug and not app.testing:
@@ -81,7 +69,7 @@ def create_app(config_class=Config):
             mail_handler = SMTPHandler(
                 mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
                 fromaddr="no-reply@" + app.config["MAIL_SERVER"],
-                toaddrs=app.config["ADMINS"],
+                toaddrs=app.config["ADMIN_EMAIL"],
                 subject="SRDP Database Failure",
                 credentials=auth,
                 secure=secure,
@@ -112,7 +100,6 @@ def create_app(config_class=Config):
         app.logger.info("SRDP DB Startup")
 
     return app
-
 
 
 from app import models

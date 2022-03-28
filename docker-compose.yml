@@ -12,7 +12,7 @@ version: "3.9"
 services:
 
     # MySQL Database
-    DB:
+    db:
         image: mysql/mysql-server:5.7
         restart: always
         env_file:
@@ -32,18 +32,16 @@ services:
             - ./db/custom.cnf:/etc/my.cnf.d/90-my.cnf
 
     # Flask App
-    API:
+    api:
         build:
             context: .
-            args:
-                - USERALE_AUTOSTART=${USERALE_AUTOSTART:-false}
         env_file:
             - .env
         depends_on:
-            - DB
+            - db
         links:
             # <service name> : <name within this container>
-            - DB
+            - db
         ports:
             - '127.0.0.1:5000:5000'
         networks:

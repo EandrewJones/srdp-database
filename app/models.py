@@ -54,23 +54,22 @@ class PaginatedAPIMixin(object):
 class ViolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "violence"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     facId = db.Column(
-        "facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True
+        "facId",
+        db.Integer,
+        db.ForeignKey("organizations.facId"),
+        index=True,
     )
     year = db.Column(db.Integer)
-    againstState = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstStateFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstOrg = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstOrgFatal = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstIngroup = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstIngroupFatal = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    againstOutgroup = db.Column(TINYINT(1, unsigned=True), nullable=False, default=0)
-    againstOutgroupFatal = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
+    againstState = db.Column(db.Integer, nullable=False, default=0)
+    againstStateFatal = db.Column(db.Integer, nullable=False, default=0)
+    againstOrg = db.Column(db.Integer, nullable=False, default=0)
+    againstOrgFatal = db.Column(db.Integer, nullable=False, default=0)
+    againstIngroup = db.Column(db.Integer, nullable=False, default=0)
+    againstIngroupFatal = db.Column(db.Integer, nullable=False, default=0)
+    againstOutgroup = db.Column(db.Integer, nullable=False, default=0)
+    againstOutgroupFatal = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"<Violent Tactics - org: {self.organization}, facId: {self.facId}, year: {self.year}>"
@@ -101,29 +100,17 @@ class ViolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
 class NonviolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "nonviolence"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     facId = db.Column(
-        "facId", db.Integer, db.ForeignKey("organizations.facId"), primary_key=True
+        "facId", db.Integer, db.ForeignKey("organizations.facId"), index=True
     )
     year = db.Column(db.Integer)
-    economicNoncooperation = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    protestDemonstration = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    nonviolentIntervention = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    socialNoncooperation = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    institutionalAction = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
-    politicalNoncooperation = db.Column(
-        TINYINT(1, unsigned=True), nullable=False, default=0
-    )
+    economicNoncooperation = db.Column(db.Integer, nullable=False, default=0)
+    protestDemonstration = db.Column(db.Integer, nullable=False, default=0)
+    nonviolentIntervention = db.Column(db.Integer, nullable=False, default=0)
+    socialNoncooperation = db.Column(db.Integer, nullable=False, default=0)
+    institutionalAction = db.Column(db.Integer, nullable=False, default=0)
+    politicalNoncooperation = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"<Nonviolent Tactics - org: {self.organization}, facId: {self.facId}, year: {self.year}>"
@@ -152,19 +139,18 @@ class NonviolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
 class Groups(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "groups"
 
-    id = db.Column(db.Integer, primary_key=True)
-    kgcId = db.Column(db.Integer, nullable=False, unique=True, primary_key=True)
+    kgcId = db.Column(db.Integer, primary_key=True)
     groupName = db.Column(db.String(255), index=True, unique=True)
-    country = db.Column(db.String(255), index=True)
+    country = db.Column(db.String(255))
     organizations = db.relationship("Organizations", backref="Group", lazy="dynamic")
     startYear = db.Column(db.Integer)
     endYear = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"<Group: {self.groupName}, kgcId: {self.kgcid}>"
+        return f"<Group: {self.groupName}, kgcId: {self.kgcId}>"
 
     def from_dict(self, data):
-        for field in ["kgcid", "groupName", "country", "startYear", "endYear"]:
+        for field in ["kgcId", "groupName", "country", "startYear", "endYear"]:
             if field in data:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
@@ -172,18 +158,17 @@ class Groups(db.Model, AuditMixin, PaginatedAPIMixin):
                 dtime_obj = parser.parse(data[field])
                 setattr(self, field, dtime_obj)
             else:
-                setattr(self, field, func.now())
+                setattr(self, field, func.current_timestamp())
 
 
 class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "organizations"
 
-    id = db.Column(db.Integer, primary_key=True)
     facId = db.Column(db.Integer, nullable=False, unique=True, primary_key=True)
     kgcId = db.Column(
         db.Integer, db.ForeignKey("groups.kgcId")
     )  # Might not be necessary if we can indirectly ref via the group backref
-    facName = db.Column(db.String(2047), index=True, unique=True)
+    facName = db.Column(db.String(767), unique=True)
     startYear = db.Column(db.Integer)
     endYear = db.Column(db.Integer)
     nonviolentTactics = db.relationship(
@@ -216,12 +201,12 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
                 setattr(self, field, func.now())
 
 
-class User(UserMixin, SearchableMixin, PaginatedAPIMixin, AuditMixin, db.Model):
+class User(UserMixin, PaginatedAPIMixin, AuditMixin, db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    username = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(120), unique=True)
     name = db.Column(db.String(120), index=True)
     password_hash = db.Column(db.String(128))
     token = db.Column(db.String(32), index=True, unique=True)
@@ -230,7 +215,7 @@ class User(UserMixin, SearchableMixin, PaginatedAPIMixin, AuditMixin, db.Model):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        if self.email and self.email in current_app.config["ADMINS"]:
+        if self.email and self.email in current_app.config["ADMIN_EMAIL"]:
             self.is_admin = True
 
     def __repr__(self):
@@ -274,7 +259,7 @@ class User(UserMixin, SearchableMixin, PaginatedAPIMixin, AuditMixin, db.Model):
         if new_user:
             if "password" in data:
                 self.set_password(data["password"])
-            if "email" in data and data["email"] in current_app.config["ADMINS"]:
+            if "email" in data and data["email"] in current_app.config["ADMIN_EMAIL"]:
                 setattr(self, "is_admin", True)
 
     def get_token(self, expires_in=3600):

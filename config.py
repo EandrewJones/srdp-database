@@ -7,6 +7,11 @@ load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config(object):
+    # Project info
+    COVER_NAME = "Strategies of Resistance Data Project"
+
+    # Hashing
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
 
     # CORS
     CORS_HEADERS = "Content-Type"
@@ -24,4 +29,6 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS") is not None
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-    ADMINS = os.environ.get("ADMIN")
+    ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME") or "admin"
+    ADMIN_EMAIL = os.environ.get("ADMIN_EMAILS")
+    ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")

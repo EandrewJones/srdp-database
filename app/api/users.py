@@ -1,13 +1,13 @@
 from flask import jsonify, request, url_for, abort
 from app import db
-from app.models import User, Post
+from app.models import User
 from app.api import bp
 from app.api.auth import token_auth
 from app.api.errors import bad_request
-from app.api_spec import UserSchema, PostSchema
+from app.api_spec import UserSchema
 
 
-@bp.route("/users?id=<int:id>", methods=["GET"])
+@bp.route("/users/<int:id>", methods=["GET"])
 @token_auth.login_required
 def get_user(id):
     """
@@ -36,7 +36,7 @@ def get_user(id):
       tags:
         - User
     """
-    if token_auth.current_user().id == id or token_auth.current_user.is_admin:
+    if token_auth.current_user().id == id or token_auth.current_user().is_admin:
         user = User.query.get_or_404(id)
         return UserSchema().dump(user)
     else:
@@ -65,7 +65,7 @@ def get_users():
       tags:
         - User
     """
-    if not token_auth.current_user.is_admin:
+    if not token_auth.current_user().is_admin:
         return bad_request("Only admins can view users.")
     page = request.args.get("page", 1, type=int)
     per_page = min(request.args.get("per_page", 10, type=int), 100)
@@ -100,10 +100,10 @@ def create_user():
       tags:
         - User
     """
-    if not token_auth.current_user.is_admin:
-        return bad_request(
-            "Only admins can create new users. Please authenticate as admin."
-        )
+    # if not token_auth.current_user.is_admin:
+    #     return bad_request(
+    #         "Only admins can create new users. Please authenticate as admin."
+    #     )
     data = request.get_json() or {}
     if (
         "username" not in data
@@ -126,7 +126,7 @@ def create_user():
     return response
 
 
-@bp.route("/users?id=<int:id>", methods=["PUT"])
+@bp.route("/users/<int:id>", methods=["PUT"])
 @token_auth.login_required
 def update_user(id):
     """
@@ -188,7 +188,7 @@ def update_user(id):
         abort(403)
 
 
-@bp.route("/users?id=<int:id>", methods=["DELETE"])
+@bp.route("/users/<int:id>", methods=["DELETE"])
 @token_auth.login_required
 def delete_user(id):
     """

@@ -1,7 +1,7 @@
-FROM python:3.6-alpine
+FROM python:3.8-buster
 
 # Add cssms user
-RUN adduser -u 1001 -G root -D cssms
+# RUN adduser -u 1001 -G root -D cssms
 
 WORKDIR /home/cssms
 
@@ -19,10 +19,6 @@ RUN chmod a+x boot.sh
 
 # Set Flask App
 ENV FLASK_APP srdp.py
-
-# Change user ownership to cssms and change user
-RUN chown -R 1001:1001 ./
-USER srdp
 
 # Launch web app
 EXPOSE 5000
