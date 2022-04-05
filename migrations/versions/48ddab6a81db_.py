@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c9d754d57ce8
+Revision ID: 48ddab6a81db
 Revises: 
-Create Date: 2022-03-27 21:35:26.394835
+Create Date: 2022-04-05 15:14:53.145012
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c9d754d57ce8'
+revision = '48ddab6a81db'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,13 +22,13 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('modified_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('kgcId', sa.Integer(), nullable=False),
-    sa.Column('groupName', sa.String(length=255), nullable=True),
-    sa.Column('country', sa.String(length=255), nullable=True),
+    sa.Column('groupName', sa.String(length=255), nullable=False),
+    sa.Column('country', sa.String(length=255), nullable=False),
     sa.Column('startYear', sa.Integer(), nullable=True),
     sa.Column('endYear', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('kgcId')
     )
-    op.create_index(op.f('ix_groups_groupName'), 'groups', ['groupName'], unique=True)
+    op.create_index(op.f('ix_groups_groupName'), 'groups', ['groupName'], unique=False)
     op.create_index(op.f('ix_groups_created_at'), 'groups', ['created_at'], unique=False)
     op.create_index(op.f('ix_groups_modified_at'), 'groups', ['modified_at'], unique=False)
     op.create_table('user',

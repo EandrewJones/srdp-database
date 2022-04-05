@@ -140,8 +140,8 @@ class Groups(db.Model, AuditMixin, PaginatedAPIMixin):
     __tablename__ = "groups"
 
     kgcId = db.Column(db.Integer, primary_key=True)
-    groupName = db.Column(db.String(255), index=True, unique=True)
-    country = db.Column(db.String(255))
+    groupName = db.Column(db.String(255), index=True, nullable=False)
+    country = db.Column(db.String(255), nullable=False)
     organizations = db.relationship("Organizations", backref="Group", lazy="dynamic")
     startYear = db.Column(db.Integer)
     endYear = db.Column(db.Integer)
