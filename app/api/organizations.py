@@ -71,8 +71,8 @@ def get_organization(facId):
       tags:
         - Organizations
     """
-    group = Organizations.query.filter_by(facId=facId).first_or_404()
-    return OrganizationSchema().dump(group)
+    organization = Organizations.query.filter_by(facId=facId).first_or_404()
+    return OrganizationSchema().dump(organization)
 
 
 @bp.route("/organizations/<int:facId>/group", methods=["GET"])

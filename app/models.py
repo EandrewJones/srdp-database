@@ -143,8 +143,8 @@ class Groups(db.Model, AuditMixin, PaginatedAPIMixin):
     groupName = db.Column(db.String(255), index=True, nullable=False)
     country = db.Column(db.String(255), nullable=False)
     organizations = db.relationship("Organizations", backref="Group", lazy="dynamic")
-    startYear = db.Column(db.Integer)
-    endYear = db.Column(db.Integer)
+    startYear = db.Column(db.Integer, nullable=True)
+    endYear = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
         return f"<Group: {self.groupName}, kgcId: {self.kgcId}>"
@@ -169,8 +169,8 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
         db.Integer, db.ForeignKey("groups.kgcId")
     )  # Might not be necessary if we can indirectly ref via the group backref
     facName = db.Column(db.String(767), unique=True)
-    startYear = db.Column(db.Integer)
-    endYear = db.Column(db.Integer)
+    startYear = db.Column(db.Integer, nullable=True)
+    endYear = db.Column(db.Integer, nullable=True)
     nonviolentTactics = db.relationship(
         "NonviolentTactics",
         foreign_keys=[NonviolentTactics.facId],
