@@ -87,7 +87,7 @@ class ViolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
             "againstOutgroup",
             "againstOutgroupFatal",
         ]:
-            if field in data:
+            if field in data and field is not None:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
             if field in data:
@@ -126,7 +126,7 @@ class NonviolentTactics(db.Model, AuditMixin, PaginatedAPIMixin):
             "institutionalAction",
             "politicalNoncooperation",
         ]:
-            if field in data:
+            if field in data and field is not None:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
             if field in data:
@@ -151,7 +151,7 @@ class Groups(db.Model, AuditMixin, PaginatedAPIMixin):
 
     def from_dict(self, data):
         for field in ["kgcId", "groupName", "country", "startYear", "endYear"]:
-            if field in data:
+            if field in data and field is not None:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
             if field in data:
@@ -191,7 +191,7 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
 
     def from_dict(self, data):
         for field in ["facId", "kgcId", "facName", "startYear", "endYear"]:
-            if field in data:
+            if field in data and field is not None:
                 setattr(self, field, data[field])
         for field in ["created_at", "modified_at"]:
             if field in data:
@@ -248,7 +248,7 @@ class User(UserMixin, PaginatedAPIMixin, AuditMixin, db.Model):
         if "id" in data:
             setattr(self, "id", data["id"])
         for field in ["username", "name", "email", "about_me"]:
-            if field in data:
+            if field in data and field is not None:
                 setattr(self, field, data[field])
         for field in ["last_seen", "created_at", "modified_at"]:
             if field in data:

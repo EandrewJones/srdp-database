@@ -10,7 +10,7 @@
         "kgcId": "2",
         "groupName": "Group5",
         "country": "testCountry",
-        "startYear": "1999",
+        "startYear": null,
         "endYear": "2000"
     },
     {

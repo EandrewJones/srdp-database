@@ -261,7 +261,6 @@ http GET $BASE_URL/organizations/1001/violent_tactics \
 kill -9 $FLASK_PID
 
 # Remove files and folders
-rm -rf migrations/
 rm -rf logs/
 rm ../srdp.db
 

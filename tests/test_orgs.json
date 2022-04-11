@@ -18,6 +18,6 @@
         "kgcId": 2,
         "facName": "testOrg3",
         "startYear": 1999,
-        "endYear": 2000
+        "endYear": null
     }
 ]
