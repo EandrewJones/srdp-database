@@ -5,6 +5,7 @@
 .Ruserdata
 *.env
 *.db
+*.log
 
 # Folders
 venv/
