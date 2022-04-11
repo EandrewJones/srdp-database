@@ -5,7 +5,7 @@ eval "$(shdotenv)"
 
 # Set up flask env
 source ../venv/bin/activate
-export FLASK_APP=../srdp.py
+export FLASK_APP=srdp.py
 export FLASK_ENV=testing
 
 # Initialize and migrate db

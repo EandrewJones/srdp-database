@@ -3,7 +3,7 @@
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, pre_dump
 from flask import url_for
 from config import Config
 from app import ma
@@ -42,6 +42,18 @@ http_basic_scheme = {"type": "http", "scheme": "basic"}
 http_bearer_scheme = {"type": "http", "scheme": "bearer"}
 spec.components.security_scheme("BasicAuth", http_basic_scheme)
 spec.components.security_scheme("BearerAuth", http_bearer_scheme)
+
+# Null handler mix in
+class BasicSchema(Schema):
+    SKIP_VALUES = set([None])
+
+    @pre_dump
+    def remove_skip_values(self, data, **kwargs):
+        return {
+            key: value for key, value in data.items()
+            if value is not None
+        }
+
 
 # Define Schemas
 class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
@@ -199,10 +211,10 @@ class OrganizationInputSchema(Schema):
     )
     facName = fields.String(description="Faction/organization name", required=True)
     startYear = fields.Int(
-        description="First year of organization's documented demands.", required=True
+        description="First year of organization's documented demands.", required=False
     )
     endYear = fields.Int(
-        description="Final year of organization's documented demands.", required=True
+        description="Final year of organization's documented demands.", required=False
     )
 
     # Optional fields
@@ -249,11 +261,11 @@ class GroupInputSchema(Schema):
     )
     startYear = fields.Int(
         description="First year that an organization from the ethnolinguistic group made claims for greater autonomy.",
-        required=True,
+        required=False,
     )
     endYear = fields.Int(
         description="Final year that an organization from the ethnolinguistic group made claims for greater autonomy.",
-        required=True,
+        required=False,
     )
 
     # Optional fields
