@@ -168,7 +168,7 @@ class Organizations(db.Model, AuditMixin, PaginatedAPIMixin):
     kgcId = db.Column(
         db.Integer, db.ForeignKey("groups.kgcId")
     )  # Might not be necessary if we can indirectly ref via the group backref
-    facName = db.Column(db.String(767), unique=True)
+    facName = db.Column(db.String(767), nullable=False)
     startYear = db.Column(db.Integer, nullable=True)
     endYear = db.Column(db.Integer, nullable=True)
     nonviolentTactics = db.relationship(
