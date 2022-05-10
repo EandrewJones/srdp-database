@@ -30,6 +30,7 @@ services:
         command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         volumes:
             - ./db/custom.cnf:/etc/my.cnf.d/90-my.cnf
+            - dbdata:/var/lib/mysql
 
     # Flask App
     api:
@@ -57,4 +58,4 @@ networks:
 
 # Names our volume
 volumes:
-    my-db:
+    dbdata:
