@@ -272,7 +272,7 @@ class User(UserMixin, PaginatedAPIMixin, AuditMixin, db.Model):
         return self.token
 
     def get_token_expiration(self):
-        return self.token_expiration
+        return int(self.token_expiration.timestamp() * 1000)
 
     def revoke_token(self):
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)

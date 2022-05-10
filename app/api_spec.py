@@ -58,7 +58,7 @@ class BasicSchema(Schema):
 # Define Schemas
 class TokenSchema(Schema):
     token = fields.Str(description="User's authorization bearer token for further requests.")
-    expiration = fields.Int(description="Time when token expires in Unix Epoch time.")
+    expiration = fields.Int(description="Time when token expires in Unix Epoch time (ms).")
 
 
 class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):

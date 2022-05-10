@@ -26,10 +26,10 @@ def get_token():
         - Token
     """
     token = basic_auth.current_user().get_token()
-    # expiration = basic_auth.current_user().get_token_expiration()
-    payload = TokenSchema.load({'token': token, 'expiration': 0})
+    expiration = basic_auth.current_user().get_token_expiration()
+    payload = TokenSchema().load({'token': token, 'expiration': expiration})
     db.session.commit()
-    return TokenSchema().dump(payload)
+    return jsonify(TokenSchema().dump(payload))
 
 
 @bp.route('/tokens', methods=['DELETE'])
