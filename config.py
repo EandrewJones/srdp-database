@@ -11,6 +11,9 @@ class Config(object):
     # Project info
     COVER_NAME = "Strategies of Resistance Data Project"
 
+    # Host
+    HOST_NAME = os.environ.get("HOST_NAME") or "<host_name>"
+
     # Hashing
     SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
 

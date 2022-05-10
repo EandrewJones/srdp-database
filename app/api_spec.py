@@ -27,13 +27,26 @@ spec = APISpec(
             \n\nWhen passing new data to the model, the order of creation must be `Groups` >\
             `Organizations` > (`NonviolentTactics` | `ViolentTactics` ), where the pipe '|' \
             indicates order indifference at the step. Users must be token-authorized to \
-            POST, PUT, or DELETE content. All paths are token protected except\
-            for `User` creation.\
-            \n\nAny model may be GET retrieved by any user so long as they are token-authorized.\
-            User tokens change every 30 minutes and can be retrieved with curl:\
-            \n\n\t\tcurl --user <username>:<password> -X POST http://<host_name>/api/tokens\
-            \n\nor with HTTPie:\
-            \n\n\t\thttp -a <username>:<password> POST http://<host_name>/api/tokens."
+            POST, PUT, or DELETE content. All paths are token protected and only an Admin may \
+            interact with endpoints for the user collection.\
+            \n\nAny model may be retrieved by any user so long as they are token-authorized.\
+            User tokens change every 30 minutes and can be retrieved using various utilities. For example:\
+            \n\ncommand-line with Curl:\
+            \n\n\t\t$ curl --user <username>:<password> -X POST https://{Config.HOST_NAME}/api/tokens\
+            \n\ncommand-line with HTTPie:\
+            \n\n\t\t$ http -a <username>:<password> POST https://{Config.HOST_NAME}/api/tokens.\
+            \n\nin Python with requests:\
+            \n\n\t\t>>> import requests\
+            \n\n\t\t>>> r = requests.post('https://{Config.HOST_NAME}/api/tokens', auth=('<user>', '<pass>'))\
+            \n\n\t\t>>> token = r.json()['token']\
+            \n\nin R with httr:\
+            \n\n\t\t> library('httr')\
+            \n\n\t\t> response <- POST('https://{Config.HOST_NAME}/api/tokens', authenticate('<user>'', '<passwd>'))\
+            \n\n\t\t> token = content(response)$token\
+            \n\nYou may also authorize below using the authorization endpoint, fetch the returned token\
+            and pass that to the authorize form BearerAuth to begin a session on this page. From there,\
+            you may perform example requests to generate the endpoint for those resources, see results, \
+            and examine model input and output schemas."
     ),
 )
 
