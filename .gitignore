@@ -8,6 +8,10 @@
 *.log
 **/*.log
 
+# Sphinx
+docs/requirements.txt
+.readthedocs.yaml
+
 # Folders
 venv/
 __pycache__/
