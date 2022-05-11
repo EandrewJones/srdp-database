@@ -49,7 +49,7 @@ is persisted to volume (data persists even after starting and stopping of the co
      - Documentation
    * - Containerization
      - Docker
-     - https://docs.docker.com/_
+     - https://docs.docker.com/
    * - Container Orchestration and Deployment
      - Docker Compose
      - https://docs.docker.com/compose/
@@ -118,6 +118,6 @@ Contents
 
 .. toctree::
 
-   directory
+   codebase
    manual
    api
