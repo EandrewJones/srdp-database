@@ -9,8 +9,8 @@
 **/*.log
 
 # Sphinx
-# docs/requirements.txt
-# .readthedocs.yaml
+docs/requirements.txt
+.readthedocs.yaml
 
 # Folders
 venv/
