@@ -1,7 +1,6 @@
-API
-===
+API Documentation
+=================
 
-.. autosummary::
-   :toctree: generated
+The end user API route documentation can be found at `https://srdp.ea-jones.com`.
 
 
