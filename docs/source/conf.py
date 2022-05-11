@@ -3,7 +3,7 @@
 # -- Project information
 
 project = 'SRDP Database & API'
-copyright = '2021, Strategies of Resistance Data Porject'
+copyright = '2021, Strategies of Resistance Data Project'
 author = 'Jones'
 
 release = '0.1'

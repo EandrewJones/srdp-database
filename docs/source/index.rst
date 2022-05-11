@@ -1,5 +1,5 @@
 Welcome to SRDP Database and API's Developer Documentation!
-=================================================
+===========================================================
 
 **Strategies of Resistance Data Project** (SRDP) is
 
