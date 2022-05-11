@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'SRDP Database & API'
-copyright = '2021, Strategies of Resistance Data Project'
-author = 'Jones'
+project = u'SRDP Database & API'
+copyright = u'2021, Strategies of Resistance Data Project'
+author = u'Evan Jones'
 
 release = '0.1'
 version = '0.1.0'
