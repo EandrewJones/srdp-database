@@ -17,6 +17,8 @@ To use Lumache, first install it using pip:
 Configuration
 -------------
 
+.. _reverse proxy:
+
 .. _launch:
 
 Launching
@@ -33,6 +35,7 @@ Working with Database Models
 ----------------------------
 
 .. _apiRoutes:
+
 
 Working with API routes
 -----------------------
