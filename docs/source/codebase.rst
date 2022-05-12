@@ -66,7 +66,7 @@ The codebase relies on docker to containerize the web app and MySQL database. Co
 painless deployment across a broad array of servers / cloud providers with minimal server-side configuration
 (apart from setting up a :ref:`reverse proxy`). Each is treated as an independent microservice and their
 network topology is defined in `docker-compose.yml`. This should be a first point of reference to gain a sense of how
-the pieces of tha application work together at a high-level.
+the pieces of the application work together at a high-level.
 
 .. _database:
 
