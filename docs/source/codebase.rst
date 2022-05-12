@@ -12,24 +12,24 @@ The project has the directory structure shown below.
 
 | srdp-database
 | ├── app
-| │   ├── administrator
-| │   ├── api
-| │   ├── auth
-| │   ├── errors
-| │   ├── main
-| │   └── template_filters
-| │   ├── __init__.py
-| │   ├── api_spec.py
-| │   ├── email.py
-| │   └── models.py
+|     ├── administrator
+|     ├── api
+|     ├── auth
+|     ├── errors
+|     ├── main
+|     └── template_filters
+|     ├── __init__.py
+|     ├── api_spec.py
+|     ├── email.py
+|     └── models.py
 | ├── db
 | ├── deployment
 | ├── docs
-| │   └── source
+|     └── source
 | ├── examples
-| │   └── api
+|     └── api
 | ├── migrations
-| │   └── versions
+|     └── versions
 | ├── tests
 | └── venv
 |     ├── bin
