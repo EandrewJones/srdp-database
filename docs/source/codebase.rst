@@ -64,9 +64,19 @@ Docker
 
 The codebase relies on docker to containerize the web app and MySQL database. Containerizing each componenet allows for
 painless deployment across a broad array of servers / cloud providers with minimal server-side configuration
-(apart from setting up a :ref:`reverse proxy`). Each is treated as an independent microservice and their
+(apart from setting up a reverse proxy). Each is treated as an independent microservice and their
 network topology is defined in `docker-compose.yml`. This should be a first point of reference to gain a sense of how
 the pieces of the application work together at a high-level.
+
+`docker-compose.yml` spins up two containers. The first is an image of a MySQL database version 5.7 and uses two volumnes: the config settings in `db/custom.cnf` and
+`/var/lib/mysql` which is where the database is mounted on the local machine so that data can persist beyond sessions (in case the container is stopped, the data will still exist
+when it is spun back up). The second is a containerized version of the Flask API web app which is launched by calling `Dockerfile`in the parent directory. This custom docker file
+configures the container environment (OS flavor, pre-installed dependencies, etc.) and finishes by calling `boot.sh` which actually launches the web app. Both containers live inside
+a private networks entitled 'dbnet'. This means that only they can see and communicate with eachother apart from a single port, 5000, which is mapped to port 5000 on the localhost.
+All requests to the API occur through this gateway.
+
+Docker provides great `documentation <https://docs.docker.com/compose/>`_ on Docker Compose for learning how to write (and understand) orchestration files for
+different services.
 
 .. _database:
 
