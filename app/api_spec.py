@@ -62,21 +62,22 @@ class BasicSchema(Schema):
 
     @pre_dump
     def remove_skip_values(self, data, **kwargs):
-        return {
-            key: value for key, value in data.items()
-            if value is not None
-        }
+        return {key: value for key, value in data.items() if value is not None}
 
 
 # Define Schemas
 class TokenSchema(Schema):
-    token = fields.Str(description="User's authorization bearer token for further requests.")
-    expiration = fields.Int(description="Time when token expires in Unix Epoch time (ms).")
+    token = fields.Str(
+        description="User's authorization bearer token for further requests."
+    )
+    expiration = fields.Int(
+        description="Time when token expires in Unix Epoch time (ms)."
+    )
 
 
 class ViolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "violence"
+        type_ = "results"
         model = ViolentTactics
         include_fk = True
         fields = (
@@ -143,7 +144,7 @@ class ViolentTacticsInputSchema(Schema):
 
 class NonviolentTacticsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "nonviolence"
+        type_ = "results"
         model = NonviolentTactics
         include_fk = True
         fields = (
@@ -191,7 +192,7 @@ class NonviolentTacticsInputSchema(Schema):
 
 class OrganizationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "organizations"
+        type_ = "results"
         model = Organizations
         includes_fk = True
         fields = (
@@ -242,7 +243,7 @@ class OrganizationInputSchema(Schema):
 
 class GroupSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "groups"
+        type_ = "results"
         model = Organizations
         includes_fk = True
         fields = (
@@ -293,7 +294,7 @@ class GroupInputSchema(Schema):
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        type_ = "users"
+        type_ = "results"
         model = User
         include_fk = True
         fields = (
