@@ -1,0 +1,143 @@
+kgcId,groupName,country,startYear,endYear
+101,Tajiks,Afghanistan,1978,
+102,Berbers,Algeria,1963,
+103,Chittagong Hill Peoples,Bangladesh,1972,
+104,Walloons,Belgium,1962,2016
+105,Indigenous Peoples,Canada,1977,
+106,Tibetans,China,1979,
+107,Indigenous Peoples,Colombia,1982,
+108,Turkish Cypriots,Cyprus,1960,
+109,Afars,Ethiopia,1975,
+110,Basque,France,1963,2010
+111,Corsicans,France,1966,
+112,Bodos,India,1973,
+113,Kashmiri Hindus,India,1998,
+115,East Timorese,Indonesia,1975,1999
+116,Palestinians,Israel,1960,
+117,South Tyrolians,Italy,1960,
+118,Indigenous Peoples (non-Mayan or Zapotecs),Mexico,1995,
+119,Gagauz,Moldova,1991,
+120,Rohingyas,Myanmar (Burma),1962,
+121,Kachins,Myanmar (Burma),1961,
+122,Tuaregs,Niger,1991,2000
+123,Oron,Nigeria,1999,2005
+124,Bengalis,Pakistan,1962,1971
+127,Chechens,Russia,1991,2016
+128,Tatars,Russia,1991,
+129,Afrikaners,South Africa,1994,
+130,Muslims,Sri Lanka,1988,
+131,Tamils,Sri Lanka,1960,
+132,Aboriginal Taiwanese,Taiwan,1996,1996
+133,Kurds,Turkey,1974,
+134,Crimean Russian,Ukraine,1991,
+135,Indigenous Peoples,United States,1968,
+136,Montagnards,Vietnam,1964,2013
+137,Kosovar Albanians,Yugoslavia,1990,1999
+138,Lozi,Zambia,1992,
+139,Sarakis,Pakistan,1991,
+140,Aboriginals,Australia,1965,
+141,Lhotshampas,Bhutan,1985,2014
+201,Croats,Bosnia & Herzegovina,1992,
+202,Quebecois,Canada,1967,
+203,Uighers,China,1990,
+204,Anjouanese,Comoros,1997,2002
+205,Lowland Indigenous Peoples,Ecuador,1964,
+206,Eritreans,Ethiopia,1961,1993
+207,Bretons,France,1968,2004
+208,Abkhazians,Georgia,1991,2016
+209,Kashmiri Muslims,India,1960,
+210,Reang (Bru),India,1996,2015
+211,Sikhs,India,1961,
+212,Papuans,Indonesia,1970,
+213,Russians,Kazakhstan,1991,2007
+214,Hmong,Laos,1991,2005
+215,Trans-Dniester Slavs,Moldova,1991,
+216,Karenni,Myanmar (Burma),1960,
+217,Shan,Myanmar (Burma),1962,
+218,East Caprivians,Namibia,1990,2014
+219,Ibos,Nigeria,1967,
+220,Yoruba,Nigeria,1960,
+221,Sindhis,Pakistan,1972,
+222,Bougainvilleans,Papua New Guinea,1987,
+223,Buryat,Russia,1991,2010
+224,Yakut,Russia,,
+225,Casamacias,Senegal,1982,
+226,Khoisan,South Africa,,
+227,Nuba,Sudan,1983,
+228,Zanzibaris,Tanzania,1984,
+229,Crimean Tatars,Ukraine,1991,2016
+230,Catholics,United Kingdom,1960,
+231,Native Hawaiians,United States,1978,
+232,Hungarians,Yugoslavia,1990,
+233,Slovenes,Yugoslavia,1989,1991
+234,Ndebele,Zimbabwe,1965,2005
+235,Uzbeks,Afghanistan,1990,
+301,Cabindans,Angola,1975,
+302,Lezgins,Azerbaijan,1991,2015
+303,Serbs,Bosnia & Herzegovina,1992,
+304,Indigenous Peoples,Brazil,1975,
+305,Indigenous Peoples,Chile,1984,
+306,Bakongo,Congo - Kinshasa,1960,
+307,Serbs,Croatia,1991,
+308,Bubis,Equatorial Guinea,1968,2005
+309,Oromos,Ethiopia,1973,
+310,Adzhars,Georgia,1991,2014
+311,South Ossetians,Georgia,1993,2016
+312,Mizos,India,1960,1986
+313,Tripuras,India,1968,
+315,Kurds,Iran,1960,
+316,Uzbeks,Kyrgyzstan,1995,2014
+317,Albanians,North Macedonia,1991,
+318,Saharawis,Morocco,1973,
+319,Karens,Myanmar (Burma),1960,
+320,Wa,Myanmar (Burma),1975,
+321,Ijaw,Nigeria,1991,
+323,Saami,Norway,1960,2016
+324,Lowland Indigenous Peoples,Peru,1980,
+325,Igorots,Philippines,1984,
+326,Kumyks,Russia,1991,2008
+327,Hungarians,Slovakia,1992,
+328,Isaaq,Somalia,1981,2005
+329,Zulus,South Africa,1975,2015
+330,Southerners,Sudan,1960,2016
+331,Saami,Sweden,1960,2016
+332,Tobagonians,Trinidad & Tobago,1978,2007
+333,Cornish,United Kingdom,1960,
+334,Puerto Ricans,United States,1960,
+335,Albanians,Yugoslavia,1998,
+336,Montenegrins,Yugoslavia,1991,2006
+401,Armenains,Azerbaijan,,
+402,Flemings,Belgium,1960,
+403,Westerners,Cameroon,1990,
+404,Southerners,Chad,1978,2016
+405,Mongols,China,1990,1996
+406,Lunda and Yeke,Congo - Kinshasa,1960,2005
+407,Afars,Djibouti,1991,
+408,Somalis,Ethiopia,1975,
+409,Saami,Finland,1960,2016
+410,Assamese,India,1960,
+411,Kashmiri Buddhist Ladakhis,India,1971,
+412,Nagas,India,1960,
+413,Acehnese,Indonesia,1978,
+414,Kurds,Iraq,1961,
+415,Sardinians,Italy,1960,
+417,Tuaregs,Mali,1988,1995
+418,Chin/Zomis,Myanmar (Burma),1987,
+419,Mons,Myanmar (Burma),1960,
+420,Indigenous Peoples and Creoles,Nicaragua,1974,2005
+421,Ogoni,Nigeria,1990,
+422,Baluchis,Pakistan,1980,
+423,Pashtuns (Pathans),Pakistan,1960,
+424,Moros,Philippines,1968,
+425,Magyars (Hungarians),Romania,1989,
+426,Lezgins,Russia,1991,2005
+427,Puntland Darods,Somalia,,
+428,Basques,Spain,1960,
+429,Catalans,Spain,1973,
+430,Jurassians,Switzerland,1960,2005
+431,Malay-Mulsims,Thailand,1967,
+432,Baganda,Uganda,1962,2016
+433,Scots,United Kingdom,1960,
+434,Tajiks,Uzbekistan,1992,1992
+435,Croats,Yugoslavia,1971,1991
+436,Sandzak Muslims,Yugoslavia,1990,
