@@ -8,6 +8,7 @@ from flask import url_for
 from config import Config
 from app import ma
 from app.models import (
+    Groups,
     User,
     ViolentTactics,
     NonviolentTactics,
@@ -244,7 +245,7 @@ class OrganizationInputSchema(Schema):
 class GroupSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         type_ = "results"
-        model = Organizations
+        model = Groups
         includes_fk = True
         fields = (
             "kgcId",
